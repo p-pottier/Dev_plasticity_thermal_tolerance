@@ -1,5 +1,7 @@
+# Developmental plasticity in thermal tolerance is insufficient to compensate for rising temperatures: a meta-analysis
 
-This repository contains bibliographic files, data and analysis code for the project entitled "Developmental plasticity in thermal tolerance is insufficient to compensate for rising temperatures: a meta-analysis". 
+
+This repository contains bibliographic files, data and analysis code for this project.
 
 Below is a description of the different folders and their content. Please feel free to contact Patrice Pottier (p.pottier@unsw.edu.au) if you need assistance navigating these documents. We highly recommend contacting us if you are to re-use our data or analyses in future studies.
 
@@ -7,7 +9,7 @@ Below is a description of the different folders and their content. Please feel f
 
 This folder contains all bibliographic files generated during literature searches and further used for eligibility assessment.
 
-##### All_results_combined
+#### All_results_combined
 
 This folder contains all bibliographic records before and after deduplication. 
 
@@ -15,7 +17,7 @@ This folder contains all bibliographic records before and after deduplication.
 * `dev_plasticity_CTmax_20210305_ALL_RESULTS.RIS`: bibliographic file containing the combined results of all searches in a RIS format
 * `dev_plasticity_CTmax_20210305_deduplicated_manually.ris`: bibliographic file containing the combined results of all searches, after removing duplicates manually. This document was then imported in Rayyan QCRI and all documents were screened for title, abstract, and keywords.
 
-##### Backward_forward
+#### Backward_forward
 
 This folder contains bibliograpic records from citing major reviews (backward), and cited in major reviews (forward). 
 
@@ -25,7 +27,7 @@ This folder contains bibliograpic records from citing major reviews (backward), 
 * `Refsnider_backward_11_20210305.ris`: bibliographic file containing the studies citing Refsnider et al. (2019). Note that the records for the forward search from this study were added manually to `dev_plasticity_CTmax_20210305_ALL_RESULTS.RIS`
 * `Schaefer_backward_126_20210305.ris`: bibliographic file containing the studies citing Schaefer & Ryan (2006). 
 
-##### Databases
+#### Databases
 
 This folder contains bibliographic records generated through database searches. Note that records retrieved from Scopus or Web of Science were divided in multiple files due to importing limits of the databases.
 
@@ -39,7 +41,7 @@ This folder contains bibliographic records generated through database searches. 
 * `WoS_2001-2839_20210305.ris`: bibliographic file containing the studies 2001-2839 retrieved from Web of Science (core collection).
 
 
-##### ProQuest
+#### ProQuest
 
 This folder contains bibliographic records generated through ProQuest. Records were dividing in multiple files due to importing limits of the database.
 
@@ -58,13 +60,13 @@ This folder contains the code, models and outputs from statistical analyses. We 
 
 `Data_and_analysis.Rproj`: R project used to navigate through the different folders and their content. We recommend using this file to faciliate reproducibility. 
 
-##### data
+#### data
 
 * `All_extracted_data_dev_ctmax.csv`: Raw data used for the analyses. Note that the data was processed in R and we recommend using the file `Processed_data.csv` for further use. 
 * `data_Morley_et_al_2019.csv`: Data from Morley et al. (2019) used to discuss the comparison between plasticity estimates of adults vs. early life stages
 * `Processed_data.csv`: Processed data. This is the dataset that was analysed and we recommend using this data in future work. 
 
-##### output 
+#### output 
 
 * `acute_effect_sizes.png`: Pie chart representing the proportion of acute effect sizes from designs A, B, or C (outlined in Figure 2)
 * `design_metareg_pub.png`: Orchard plot displaying the variation in plastic responses between experimental designs (outlined in Figure 2)
@@ -76,14 +78,14 @@ This folder contains the code, models and outputs from statistical analyses. We 
 * `phylo_tree_pub.svg`: Distribution and characterisation of the effect sizes across the phylogeny of included species
 * `taxa_metareg_pub.svg`: Orchard plot displaying the variation in plastic responsses between taxonomic groups
 
-##### R 
+#### R 
 
 * `Statistical_analysis_cache`: Cache produced from knitting the Rmd analysis code
 * `Statistical_analysis_files` Files produced from knitting the Rmd analysis code
 * `Statistical_analyses.html`: Knitted analysis code. We strongly recommend using this document to navigate the statistical analyses. 
 * `Statistical_analyses.RMD`: Analysis code.
 
-##### RData
+#### RData
 
 * `adjusted_intercept_model.RDATA`: R data file containing the intercept meta-analytic model adjusted for the over-representation of aquatic species in the dataset
 * `best_models.RDATA`: R data file containing all models within 2 AICc values of the best model
