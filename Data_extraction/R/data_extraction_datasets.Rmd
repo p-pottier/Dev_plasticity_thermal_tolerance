@@ -1,0 +1,298 @@
+---
+title: "data_extraction_datasets"
+author: "Patrice Pottier"
+date: "03/08/2021"
+output: html_document
+---
+
+# load packages 
+```{r}
+library(tidyverse)
+library(readxl)
+library(here)
+```
+
+# Abayarathna et al. 2019
+
+```{r}
+## Duration of incubation period
+inc_period <- read_excel(path = here("datasets", "Abayarathna_et_al_2019.xlsx"), sheet = "Inc period SVL mass")
+inc_period  %>%
+    group_by(Location, `Inc treatment`) %>% 
+    summarise(mean(`Inc period (days)`))
+
+## Heat tolerance at 2 weeks of age
+HT_two_weeks <- read_excel(path = here("datasets", "Abayarathna_et_al_2019.xlsx"), sheet = "thermal tolerance 2 weeks")
+HT_two_weeks %>%
+    group_by(Site, `Inc treatment`) %>% 
+    summarise(mean(`CT max°C`), sd(`CT max°C`), n=n(),
+              mean(`SVL mm`), mean(`Mass g`))
+
+
+## Heat tolerance at 6 weeks of age
+HT_six_weeks <- read_excel(path = here("datasets", "Abayarathna_et_al_2019.xlsx"), sheet = "thermal tolerance 6 weeks")
+HT_six_weeks %>%
+    group_by(Site, `Inc Treatment`) %>% 
+    summarise(mean(`CT max°C`), sd(`CT max°C`), n=n(),
+              mean(`SVL mm`), mean(`Mass g`))
+
+## Heat tolrance at 6 months of age, after recapture from the wild
+HT_six_months <- read_excel(path = here("datasets", "Abayarathna_et_al_2019.xlsx"), sheet = "thermal tolerance 6 months")
+HT_six_months %>%
+    group_by(Site, `Inc Treatment`) %>% 
+    summarise(mean(`CT max °C`) , sd(`CT max °C`), n=n())
+
+```
+
+
+# Asheim et al. 2020 
+
+```{r}
+Asheim<- read_csv("datasets/Asheim_et_al_2020.csv")
+
+Asheim %>% 
+    filter(rwTol!="NA") %>% 
+    group_by(treatment) %>% 
+    summarise(mean(rwTol), sd(rwTol), n=n(),
+              mean(length_end, na.rm=T), mean(mass_end, na.rm=T))
+
+Asheim %>% 
+    filter(exclude==0 & swTol!="NA") %>% 
+    group_by(treatment) %>% 
+    summarise(mean(swTol), sd(swTol), n=n(),
+              mean(length_end), mean(mass_end))
+```
+
+# Bai et al. 2019 
+
+```{r}
+bai <- read_excel(path = here("datasets", "Bai_et_al_2019.xls"), sheet = "CTmax")
+bai %>%
+    group_by(Time_recovery, Treatment) %>% 
+    summarise(mean(CTmax), sd(CTmax), n=n())
+
+```
+
+
+# Dayananda et al. 2017 
+
+```{r}
+dayananda <- read_excel(path = here("datasets", "Dayananda_et_al_2017.xlsx"), sheet = "CTmax and CTmin")
+dayananda  %>%
+    filter(Ctmax...4!="NA") %>% 
+    group_by(Loc, INC) %>% 
+    summarise(mean(Ctmax...4), sd(Ctmax...4), n=n())
+```
+
+
+# Gibson et al. 2015
+
+Note that organisation of the file was modified from the one published in supplementary materials.
+
+```{r}
+gibson<- read_csv("datasets/Gibson_et_al_2015.csv")
+gibson %>% 
+    group_by(experiment, Acclimation_temp, Rearing_temp) %>% 
+    summarise(mean(Temp), sd(Temp), n=n(), mean(Mass))
+
+```
+
+
+# Gunderson et al. 2020 
+
+```{r}
+gunderson<- read_csv("datasets/Gunderson_et_al_2020.csv")
+gunderson %>% 
+    group_by(sex, treat) %>% 
+    summarise(mean(ctmax), sd(ctmax), n=n(), mean(svl), mean(mass))
+```
+
+# Healy et al. 2019 
+
+The files "SD_BR_plasticity_CTmax_data.txt" and "SC_PE_plasticity_CTmax_data.txt" from Dryad were combined into one file. 
+
+```{r}
+healy<- read.table("datasets/Healy_et_al_2019.txt", header=T)
+healy %>% 
+    group_by(pop, accTemp, devTemp, accTime) %>% 
+    summarise(mean(ctmax), sd(ctmax), n=n())
+```
+
+
+# Illing et al. 2020 
+
+Note that the first rows of the data from Dryad were trimmed to only keep the headers. 
+
+```{r}
+illing<- read_csv("datasets/Illing_et_al_2020.csv")
+illing %>% 
+    filter(CTmax!="NA") %>% 
+    group_by(Species, Age, Rate, Treatment) %>% 
+    summarise(mean(CTmax), sd(CTmax), n=n(), mean(SL, na.rm=T), bw=mean(BW, na.rm=T)/1000)
+```
+
+
+
+# Llewelyn et al. 2018 
+
+```{r}
+llewelyn<- read_csv("datasets/Llewelyn_et_al_2018.csv")
+# CTmax after one month
+llewelyn %>% 
+    filter(oneMonthCTmax!="NA") %>% 
+    group_by(population, incTemp) %>% 
+    summarise(mean(oneMonthCTmax), sd(oneMonthCTmax), n=n())
+
+# CTmax of adults
+
+llewelyn %>% 
+    filter(adultCTmax!="NA") %>% 
+    group_by(population, incTemp) %>% 
+    summarise(mean(adultCTmax), sd(adultCTmax), n=n())
+```
+
+# Moyano et al. 2018 
+
+```{r}
+moyano <- read_excel(path = here("datasets", "Moyano_et_al_2018.xlsx"), sheet = "CTmax_herring+seabass_Fig2")
+moyano$`Body length (mm)`<-as.numeric(moyano$`Body length (mm)`)
+moyano$`CTMax (°C)`<-as.numeric(moyano$`CTMax (°C)`)
+
+moyano %>%
+    filter(`CTMax (°C)`!="NA") %>% 
+    group_by(Species, `Larval Stage`, `Age (days post-hatch)`,  `Warming rate (°C h-1)`, `Acclimation temperature (°C)`) %>% 
+    summarise(mean(`CTMax (°C)`), sd(`CTMax (°C)`), n=n(), mean(`Body length (mm)`))
+```
+
+
+# Oyamaguchi et al. 2018 
+
+```{r}
+oyamaguchi<-read.table("datasets/Oyamaguchi_et_al_2018.txt", header=T) 
+oyamaguchi<-filter(oyamaguchi,CT =="max", critical_temperature!="NA")
+oyamaguchi %>% 
+  group_by(temperature_raised) %>%
+  summarize(acclim_duration = mean(days_acclim),
+            ctmax = mean(critical_temperature),
+            sd = sd(critical_temperature),
+            n = n(),
+            avg_mass = mean(mass_g),
+            avg_size = mean(length_mm))
+
+```
+
+
+# Salachan and Sorensen 2017 
+
+
+```{r}
+
+# Animals at 9 days of age
+
+sorensen_9d_4_19<- read.csv("datasets/Salachan_Sorensen_2017_9d_4_19.csv", sep=";", header=T)
+sorensen_9d_4_19 %>% 
+    group_by(ad.temp, ad.treat, dev.treat, dev.temp) %>% 
+    summarise(mean(ctmax), sd(ctmax), n=n())
+
+sorensen_9d_4_23<- read.csv("datasets/Salachan_Sorensen_2017_9d_4_23.csv", sep=";", header=T)
+sorensen_9d_4_23 %>% 
+    group_by(ad.temp, ad.treat, dev.treat, dev.temp) %>% 
+    summarise(mean(ctmax), sd(ctmax), n=n())
+
+sorensen_9d_8_19<- read.csv("datasets/Salachan_Sorensen_2017_9d_8_19.csv", sep=";", header=T)
+sorensen_9d_8_19 %>% 
+    group_by(ad.temp, ad.treat, dev.treat, dev.temp) %>% 
+    summarise(mean(ctmax), sd(ctmax), n=n())
+
+sorensen_9d_8_23<- read.csv("datasets/Salachan_Sorensen_2017_9d_8_23.csv", sep=";", header=T)
+sorensen_9d_8_23 %>% 
+    group_by(ad.temp, ad.treat, dev.treat, dev.temp) %>% 
+    summarise(mean(ctmax), sd(ctmax), n=n())
+
+```
+
+
+# Salinas et al. 2019 
+
+```{r}
+salinas <- read_excel(path = here("datasets", "Salinas_et_al_2019.xlsx"), sheet = "Data")
+salinas %>% 
+    filter(CTmax!="NA") %>% 
+    group_by(Treatment) %>% 
+    summarise(mean(CTmax), sd(CTmax), n=n(), mean(Length7))
+```
+
+# Alford 2010 - Chapter 5
+
+```{r}
+alford <- read_excel(path = here("datasets", "Alford_2010.xlsx"), sheet = "Sheet1")
+
+# Heat movement threshold
+alford %>%
+    filter(`Heat Movement Threshold` !="NA") %>% 
+    group_by(Clone, Treatment) %>% 
+    summarise(mean(`Heat Movement Threshold`), sd(`Heat Movement Threshold`), n=n())
+
+# Heat coma temperature
+alford %>%
+    filter(`Heat Coma` !="NA") %>% 
+    group_by(Clone, Treatment) %>% 
+    summarise(mean(`Heat Coma`), sd(`Heat Coma`), n=n())
+```
+# Simon et al. 2015 
+
+```{r}
+simon<- read.csv("datasets/Simon_et_al_2015.csv", sep=";")
+simon %>% 
+    filter(CTMax!="NA") %>% 
+    group_by(Species, Clutch, Acclimation) %>% 
+    summarise(mean(CTMax), sd(CTMax), n=n())
+```
+
+# Spinks et al. 2019 
+
+```{r}
+spinks<- read.csv("datasets/Spinks_et_al_2019.csv")
+spinks %>% 
+    filter(CTM!="NA") %>% 
+    group_by(Sex, Treatment) %>% 
+    summarise(mean(CTM), sd(CTM), n=n(), mean(W), mean(SL))
+
+```
+# Terblanche and Chown 2006 
+
+```{r}
+terblanche_chown<- read_excel(path = here("datasets", "Terblanche_and_Chown_2006.xlsx"), sheet = "Sheet1")
+terblanche_chown %>% 
+    filter(Ctmax!="NA"&Trtmnt=="P") %>% 
+    group_by(Treatment) %>% 
+    summarise(mean(Ctmax), sd(Ctmax), n=n())
+```
+
+# Xue and Ma 2020 
+
+```{r}
+xue_ma<- read_excel(path = here("datasets", "Xue_and_Ma_2020.xlsx"), sheet = "Sheet1")
+xue_ma %>% 
+    filter(ctmax!="NA"&treatment!="H") %>% 
+    group_by(sex, `mating status`, day, treatment) %>% 
+    summarise(mean(ctmax), sd(ctmax), n=n())
+```
+
+
+
+# Gray 2013
+
+```{r}
+gray<- read_excel(path = here("datasets", "Gray_2013.xlsx"), sheet = "Sheet1")
+gray %>% 
+    filter(CTmax!="NA") %>% 
+    group_by(larvaT, adultT) %>% 
+    summarise(mean(CTmax), sd(CTmax), n=n(), mean(drymass))
+```
+
+
+
+
+
+

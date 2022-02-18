@@ -1,0 +1,772 @@
+---
+title: "data_extraction_LT50"
+author: "Patrice Pottier"
+date: "04/08/2021"
+output: html_document
+---
+
+ R file to calculate LT50 from survival data at different test temperatures
+ 
+```{r}
+library(MASS) # For dose.p function
+library(tidyverse)
+```
+
+
+# Billman et al. 2008
+
+I used n=30 for the survival at each temperatures because authors used 10 animals * 3 replicates per test temperatures. 
+```{r}
+# LT50 for the 15C acclimation temperature. 
+billman_15C<-data.frame(temp= c(17,26,27,28,29), 
+                        alive=c(30, 30*0.9, 30*0.11, 30*0.06, 0),
+                        dead=c(0, 30*0.1, 30*0.89, 30*0.94, 30))
+
+mod.billman_15C<-glm(cbind(alive, dead) ~ temp, family=binomial, data=billman_15C)
+dose.p(mod.billman_15C, p=0.5)
+
+
+# LT50 for the 18C acclimation temperature. 
+billman_18C<-data.frame(temp= c(18,26,27,28,29),
+                        alive=c(30, 30*0.933, 30*0.7, 30*0.9, 30*0.245),
+                        dead=c(0, 30*0.067, 30*0.3, 30*0.1, 30*0.755))
+
+mod.billman_18C<-glm(cbind(alive, dead) ~ temp, family=binomial, data=billman_18C)
+dose.p(mod.billman_18C, p=0.5)
+
+# LT50 for the 23C acclimation temperature. 
+billman_23C<-data.frame(temp= c(23, 28, 29, 30, 31), 
+                        alive=c(30*0.934, 30*0.967, 30*0.8, 30*0.767, 0),
+                        dead=c(30*0.066, 30*0.033, 30*0.2, 30*0.233, 30))
+
+mod.billman_23C<-glm(cbind(alive, dead) ~ temp, family=binomial, data=billman_23C)
+dose.p(mod.billman_23C, p=0.5)
+
+# LT50 for the 28C acclimation temperature. 
+billman_28C<-data.frame(temp= c(28, 30, 31, 32), 
+                        alive=c(30, 30*0.611, 0, 0),
+                        dead=c(0, 30*0.389, 30, 30))
+
+mod.billman_28C<-glm(cbind(alive, dead) ~ temp, family=binomial, data=billman_28C)
+dose.p(mod.billman_28C, p=0.5)
+```
+
+# Ineno et al. 2005 
+
+I created a dataset with the data extracted from metaDigitise. 
+Note that all data presented in the figures were extracted. However, many data points were irrelevant to calculate appropriate LT50 values and were discarded by the authors (see table 1). Moreover, to be included in our study, we needed comparable values at 10 and 14C incubation temperatures, which reduced the number of relevant observations even further. 
+Below are presented only the relevant observations to calculate LT50.
+```{r}
+ineno<- read_csv("datasets/Ineno_et_al_2005.csv")
+ineno$surv<-replace(ineno$surv, ineno$surv<0, 0) # Make sure to have true zeros
+ineno$surv<-replace(ineno$surv, ineno$surv>100, 100) # Make sure to have true 100s
+
+ineno <- ineno %>% 
+    group_by(fig, strain, set_time, inc, temp) %>% 
+    summarise(alive=(surv/100)*41, dead=41-alive)
+
+#################################################################################################
+###################### Embryos of the thermally selected strain #################################
+#################################################################################################
+
+########## Embryos at the early segmentation stage #################
+
+# Early segmentation, 10C acclimated, 360 min survival 
+TS_early_360_10C <- filter(ineno, fig=="1a"&set_time==360&inc==10)
+mod_early_360_10C<-glm(cbind(alive, dead)~ temp, family=binomial, data =TS_early_360_10C)
+dose.p(mod_early_360_10C, p=0.5)
+
+# Early segmentation, 14C acclimated, 360 min survival 
+TS_early_360_14C <- filter(ineno, fig=="2a"&set_time==360&inc==14)
+mod_early_360_14C<-glm(cbind(alive, dead)~ temp, family=binomial, data =TS_early_360_14C)
+dose.p(mod_early_360_14C, p=0.5) 
+
+###
+
+  
+# Early segmentation, 10C acclimated, 720 min survival 
+TS_early_720_10C <- filter(ineno, fig=="1a"&set_time==720&inc==10)
+mod_early_720_10C<-glm(cbind(alive, dead)~ temp, family=binomial, data =TS_early_720_10C)
+dose.p(mod_early_720_10C, p=0.5)
+
+# Early segmentation, 14C acclimated, 720 min survival 
+TS_early_720_14C <- filter(ineno, fig=="2a"&set_time==720&inc==14)
+mod_early_720_14C<-glm(cbind(alive, dead)~ temp, family=binomial, data =TS_early_720_14C)
+dose.p(mod_early_720_14C, p=0.5) 
+
+###
+
+  
+# Early segmentation, 10C acclimated, 1440 min survival 
+TS_early_1440_10C <- filter(ineno, fig=="1a"&set_time==1440&inc==10)
+mod_early_1440_10C<-glm(cbind(alive, dead)~ temp, family=binomial, data =TS_early_1440_10C)
+dose.p(mod_early_1440_10C, p=0.5)
+
+# Early segmentation, 14C acclimated, 1400 min survival 
+TS_early_1440_14C <- filter(ineno, fig=="2a"&set_time==1440&inc==14)
+mod_early_1440_14C<-glm(cbind(alive, dead)~ temp, family=binomial, data =TS_early_1440_14C)
+dose.p(mod_early_1440_14C, p=0.5) 
+
+######## Embryos at the neurula stage ##################
+
+
+# neurula, 10C acclimated, 720 min survival 
+TS_neur_720_10C <- filter(ineno, fig=="1e"&set_time==720&inc==10)
+mod_neur_720_10C<-glm(cbind(alive, dead)~ temp, family=binomial, data =TS_neur_720_10C)
+dose.p(mod_neur_720_10C, p=0.5)
+
+# neurula, 14C acclimated, 720 min survival 
+TS_neur_720_14C <- filter(ineno, fig=="2e"&set_time==720&inc==14)
+mod_neur_720_14C<-glm(cbind(alive, dead)~ temp, family=binomial, data =TS_neur_720_14C)
+dose.p(mod_neur_720_14C, p=0.5) 
+
+###
+
+  
+# neurula, 10C acclimated, 1440 min survival 
+TS_neur_1440_10C <- filter(ineno, fig=="1e"&set_time==1440&inc==10)
+mod_neur_1440_10C<-glm(cbind(alive, dead)~ temp, family=binomial, data =TS_neur_1440_10C)
+dose.p(mod_neur_1440_10C, p=0.5)
+
+# neurula, 14C acclimated, 1400 min survival 
+TS_neur_1440_14C <- filter(ineno, fig=="2e"&set_time==1440&inc==14)
+mod_neur_1440_14C<-glm(cbind(alive, dead)~ temp, family=binomial, data =TS_neur_1440_14C)
+dose.p(mod_neur_1440_14C, p=0.5) 
+
+
+########################################################################################################
+############################# Embryos of the Donaldson strain ##########################################
+########################################################################################################
+
+
+
+########## Embryos at the early segmentation stage #################
+
+
+# Early segmentation, 10C acclimated, 360 min survival 
+donaldson_early_360_10C <- filter(ineno, fig=="1b"&set_time==360&inc==10)
+mod_early_360_10C<-glm(cbind(alive, dead)~ temp, family=binomial, data =donaldson_early_360_10C)
+dose.p(mod_early_360_10C, p=0.5)
+
+# Early segmentation, 14C acclimated, 360 min survival 
+donaldson_early_360_14C <- filter(ineno, fig=="2b"&set_time==360&inc==14)
+mod_early_360_14C<-glm(cbind(alive, dead)~ temp, family=binomial, data =donaldson_early_360_14C)
+dose.p(mod_early_360_14C, p=0.5) 
+
+###
+
+  
+# Early segmentation, 10C acclimated, 720 min survival 
+donaldson_early_720_10C <- filter(ineno, fig=="1b"&set_time==720&inc==10)
+mod_early_720_10C<-glm(cbind(alive, dead)~ temp, family=binomial, data =donaldson_early_720_10C)
+dose.p(mod_early_720_10C, p=0.5)
+
+# Early segmentation, 14C acclimated, 720 min survival 
+donaldson_early_720_14C <- filter(ineno, fig=="2b"&set_time==720&inc==14)
+mod_early_720_14C<-glm(cbind(alive, dead)~ temp, family=binomial, data =donaldson_early_720_14C)
+dose.p(mod_early_720_14C, p=0.5) 
+
+
+
+################### Embryos at the neurula stage ##################
+
+# neurula, 10C acclimated, 720 min survival 
+donaldson_neur_720_10C <- filter(ineno, fig=="1f"&set_time==720&inc==10)
+mod_neur_720_10C<-glm(cbind(alive, dead)~ temp, family=binomial, data =donaldson_neur_720_10C)
+dose.p(mod_neur_720_10C, p=0.5)
+
+# neurula, 14C acclimated, 720 min survival 
+donaldson_neur_720_14C <- filter(ineno, fig=="2f"&set_time==720&inc==14)
+mod_neur_720_14C<-glm(cbind(alive, dead)~ temp, family=binomial, data =donaldson_neur_720_14C)
+dose.p(mod_neur_720_14C, p=0.5) 
+
+###
+
+  
+# neurula, 10C acclimated, 1440 min survival 
+donaldson_blast1440_10C <- filter(ineno, fig=="1f"&set_time==1440&inc==10)
+mod_blast1440_10C<-glm(cbind(alive, dead)~ temp, family=binomial, data =donaldson_blast1440_10C)
+dose.p(mod_blast1440_10C, p=0.5)
+
+# neurula, 14C acclimated, 1400 min survival 
+donaldson_blast1440_14C <- filter(ineno, fig=="2f"&set_time==1440&inc==14)
+mod_blast1440_14C<-glm(cbind(alive, dead)~ temp, family=binomial, data =donaldson_blast1440_14C)
+dose.p(mod_blast1440_14C, p=0.5) 
+
+
+```
+
+
+# Sakurai et al. 2021
+```{r}
+# LT50 for the group acclimated to the lower temperature
+sakurai_LA<-data.frame(temp= c(21.8, 24.2, 25.8, 27.8), 
+                        alive=c(10, 10, 0, 0),
+                        dead=c(0, 0, 10, 10))
+
+mod.sakurai_LA<-glm(cbind(alive, dead) ~ temp, family=binomial, data=sakurai_LA)
+dose.p(mod.billman_15C, p=0.5)
+
+
+# LT50 for the group acclimated to the higher temperature
+
+sakurai_HA<-data.frame(temp= c(21.8, 24.2, 25.8, 27.8, 30.3),
+                        alive=c(10, 10, 10, 10, 0),
+                        dead=c(0, 0, 0, 0, 10))
+
+mod.sakurai_HA<-glm(cbind(alive, dead) ~ temp, family=binomial, data=sakurai_HA)
+dose.p(mod.sakurai_HA, p=0.5)
+
+```
+# Tsuchida and Setoguma 1997 
+
+We can convert survival at different temperatures to the temperature animals can tolerate for 1 hour according to Jorgensen et al. 2021 
+
+See script at https://github.com/MOersted/Thermal-tolerances/blob/main/TDT_from_Static.R
+
+```{r}
+static = data.frame(group=c("15C_acc", "15C_acc", "15C_acc", "15C_acc", "20C_acc", "20C_acc", "20C_acc", "20C_acc", "25C_acc", "25C_acc", "25C_acc", "25C_acc", "28C_acc", "28C_acc", "28C_acc", "28C_acc", "28C_acc", "28C_acc"), 
+                    t_coma=c(79, 125, 143, 225, 83, 130, 230, 520, 112, 236, 640, 1730, 53, 97, 193, 590, 1200, 2310), 
+                    assay_temp=c(30, 29.5, 29, 28.4, 31, 30.5, 30, 29.6, 31.5, 31, 30.4, 30, 32.9, 32.4, 31.9, 31.5, 31, 30.5))
+
+
+mod.15C<-lm(log10(t_coma)~assay_temp, data=subset(static, group=="15C_acc"))
+chemCal::inverse.predict(mod.15C, log10(60))
+
+mod.20C<-lm(log10(t_coma)~assay_temp, data=subset(static, group=="20C_acc"))
+chemCal::inverse.predict(mod.20C, log10(60))
+
+mod.25C<-lm(log10(t_coma)~assay_temp, data=subset(static, group=="25C_acc"))
+chemCal::inverse.predict(mod.25C, log10(60))
+
+mod.28C<-lm(log10(t_coma)~assay_temp, data=subset(static, group=="28C_acc"))
+chemCal::inverse.predict(mod.28C, log10(60))
+```
+
+# Wagner et al. 2001 
+
+Note that the data for the BV population was not possible to estimate because the mortality was higher at low vs. high temperatures. 
+```{r}
+# LT50 for the BL population acclimated to 13.6C
+wagner_BL_low<-data.frame(temp= c(23, 23.5, 24), 
+                        alive=c(10*0.8, 10*0.633, 0),
+                        dead=c(10*0.2, 10*0.367, 10))
+
+mod.wagner_BL_low<-glm(cbind(alive, dead) ~ temp, family=binomial, data=wagner_BL_low)
+dose.p(mod.wagner_BL_low, p=0.5)
+
+
+# LT50 for the BL population acclimated to 18C
+
+wagner_BL_high<-data.frame(temp= c(23.2, 23.7, 23.9, 24.2, 24.5),
+                        alive=c(10, 10*0.1, 10*0.85, 10*0.267, 0),
+                        dead=c(0, 10*0.9, 10*0.15, 10*0.733, 10))
+
+mod.wagner_BL_high<-glm(cbind(alive, dead) ~ temp, family=binomial, data=wagner_BL_high)
+dose.p(mod.wagner_BL_high, p=0.5)
+
+
+# LT50 for the SN population acclimated to 13.6C
+wagner_SN_low<-data.frame(temp= c(23, 23.5, 24), 
+                        alive=c(10*0.867, 10*0.967, 0),
+                        dead=c(10*0.133, 10*0.033, 10))
+
+mod.wagner_SN_low<-glm(cbind(alive, dead) ~ temp, family=binomial, data=wagner_SN_low)
+dose.p(mod.wagner_SN_low, p=0.5)
+
+
+# LT50 for the SN population acclimated to 18C
+
+wagner_SN_high<-data.frame(temp= c(23.2, 23.7, 23.9, 24.2, 24.5),
+                        alive=c(10, 10*0.05, 10*0.25, 10*0.133, 0),
+                        dead=c(0, 10*0.95, 10*0.75, 10*0.867, 10))
+
+mod.wagner_SN_high<-glm(cbind(alive, dead) ~ temp, family=binomial, data=wagner_SN_high)
+dose.p(mod.wagner_SN_high, p=0.5)
+
+
+
+# LT50 for the EL population acclimated to 13.6C
+wagner_EL_low<-data.frame(temp= c(23, 23.5, 24), 
+                        alive=c(10*0.8, 10*0.767, 10*0.267),
+                        dead=c(10*0.2, 10*0.233, 10*0.733))
+
+mod.wagner_EL_low<-glm(cbind(alive, dead) ~ temp, family=binomial, data=wagner_EL_low)
+dose.p(mod.wagner_EL_low, p=0.5)
+
+
+# LT50 for the EL population acclimated to 18C
+
+wagner_EL_high<-data.frame(temp= c(23.2, 23.7, 23.9, 24.2, 24.5),
+                        alive=c(10*0.967, 10*0.486, 10*0.9, 10*0.148, 10*0.25),
+                        dead=c(10*0.033, 10*0.514, 10*0.1, 10*0.852, 10*0.75))
+
+mod.wagner_EL_high<-glm(cbind(alive, dead) ~ temp, family=binomial, data=wagner_EL_high)
+dose.p(mod.wagner_EL_high, p=0.5)
+```
+
+# Benedict et al. 1991 
+
+```{r}
+# LT50 for the animals acclimated to 25C 
+
+benedict_25C<-data.frame(temp= c(30, 37, 38.5, 40, 41.5, 43),
+                        alive=c(100, 100, 100*0.997, 100*0.92, 100*0.793, 0),
+                        dead=c(0, 0, 100*0.003, 100*0.08, 100*0.707, 100))
+
+mod.benedict_25C<-glm(cbind(alive, dead) ~ temp, family=binomial, data=benedict_25C)
+dose.p(mod.benedict_25C, p=0.5)
+
+
+
+benedict_30C<-data.frame(temp= c(30, 37, 38.5, 40, 41.5, 43, 44.5),
+                        alive=c(100, 100, 100, 100, 100*0.918, 100*0.013, 0),
+                        dead=c(0, 0, 0, 0, 100*0.087, 100*0.987, 100))
+
+mod.benedict_30C<-glm(cbind(alive, dead) ~ temp, family=binomial, data=benedict_30C)
+dose.p(mod.benedict_30C, p=0.5)
+```
+
+# Cai and Chen 2005 
+
+```{r}
+######### P. menodon ############
+
+# Data for P. menodon acclimated to 25C 
+
+cai_chen_menodon_25C<-data.frame(temp= c(34, 35, 36, 37, 38, 39, 40),
+                        alive=c(20, 20, 20*0.95, 20*0.75, 20*0.15, 0, 0),
+                        dead=c(0, 0, 20*0.05, 20*0.25, 20*0.85, 20, 20))
+
+mod.cai_chen_menodon_25C<-glm(cbind(alive, dead) ~ temp, family=binomial, data=cai_chen_menodon_25C)
+dose.p(mod.cai_chen_menodon_25C, p=0.5)
+
+# Data for P. menodon acclimated to 28C 
+
+cai_chen_menodon_28C<-data.frame(temp= c(34, 35, 36, 37, 38, 39, 40),
+                        alive=c(20, 20, 20*0.95, 20*0.9, 20*0.2, 0, 0),
+                        dead=c(0, 0, 20*0.05, 20*0.1, 20*0.8, 20, 20))
+
+mod.cai_chen_menodon_28C<-glm(cbind(alive, dead) ~ temp, family=binomial, data=cai_chen_menodon_28C)
+dose.p(mod.cai_chen_menodon_8C, p=0.5)
+
+# Data for P. menodon acclimated to 31C 
+
+cai_chen_menodon_31C<-data.frame(temp= c(35, 36, 37, 38, 39, 40),
+                        alive=c(20, 20, 20*0.9, 20*0.4, 0, 0),
+                        dead=c(0, 0, 20*0.01, 20*0.6, 20, 20))
+
+mod.cai_chen_menodon_31C<-glm(cbind(alive, dead) ~ temp, family=binomial, data=cai_chen_menodon_31C)
+dose.p(mod.cai_chen_menodon_31C, p=0.5)
+
+# Data for P. menodon acclimated to 34C 
+
+cai_chen_menodon_34C<-data.frame(temp= c(35, 36, 37, 38, 38.5, 39, 40),
+                        alive=c(20, 20, 20*0.95, 20*0.55, 20*0.2, 0, 0),
+                        dead=c(0, 0, 20*0.05, 20*0.45, 20*0.8, 20, 20))
+
+mod.cai_chen_menodon_34C<-glm(cbind(alive, dead) ~ temp, family=binomial, data=cai_chen_menodon_34C)
+dose.p(mod.cai_chen_menodon_34C, p=0.5)
+
+# Data for P. menodon acclimated to 35C 
+
+cai_chen_menodon_35C<-data.frame(temp= c(35, 36, 37, 38, 38.5, 39, 40),
+                        alive=c(20, 20, 20*0.95, 20*0.6, 20*0.2, 0, 0),
+                        dead=c(0, 0, 20*0.05, 20*0.4, 20*0.8, 20, 20))
+
+mod.cai_chen_menodon_35C<-glm(cbind(alive, dead) ~ temp, family=binomial, data=cai_chen_menodon_35C)
+dose.p(mod.cai_chen_menodon_35C, p=0.5)
+
+
+########## M. affinis ################
+
+# Data for P. affinis acclimated to 25C 
+
+cai_chen_affinis_25C<-data.frame(temp= c(36, 37, 38, 39, 40, 41, 42),
+                        alive=c(20, 20, 20*0.95, 20*0.45, 0, 0, 0),
+                        dead=c(0, 0, 20*0.05, 20*0.55, 20, 20, 20))
+
+mod.cai_chen_affinis_25C<-glm(cbind(alive, dead) ~ temp, family=binomial, data=cai_chen_affinis_25C)
+dose.p(mod.cai_chen_affinis_25C, p=0.5)
+
+# Data for P. affinis acclimated to 28C 
+
+cai_chen_affinis_28C<-data.frame(temp= c(36, 37, 38, 39, 40, 41, 42),
+                        alive=c(20, 20, 20, 20*0.55, 20*0.15, 0, 0),
+                        dead=c(0, 0, 0, 20*0.45, 20*0.85, 20, 20))
+
+mod.cai_chen_affinis_28C<-glm(cbind(alive, dead) ~ temp, family=binomial, data=cai_chen_affinis_28C)
+dose.p(mod.cai_chen_affinis_28C, p=0.5)
+
+# Data for P. affinis acclimated to 31C 
+
+cai_chen_affinis_31C<-data.frame(temp= c(36, 37, 38, 39, 40, 41, 42),
+                        alive=c(20, 20, 20, 20*0.55, 20*0.2, 0, 0),
+                        dead=c(0, 0, 0, 20*0.45, 20*0.8, 20, 20))
+
+mod.cai_chen_affinis_31C<-glm(cbind(alive, dead) ~ temp, family=binomial, data=cai_chen_affinis_31C)
+dose.p(mod.cai_chen_affinis_31C, p=0.5)
+
+# Data for P. affinis acclimated to 34C 
+
+cai_chen_affinis_34C<-data.frame(temp= c(36, 37, 38, 39, 40, 41, 42),
+                        alive=c(20, 20, 20, 20*0.6, 20*0.2, 0, 0),
+                        dead=c(0, 0, 0, 20*0.4, 20*0.8, 20, 20))
+
+mod.cai_chen_affinis_34C<-glm(cbind(alive, dead) ~ temp, family=binomial, data=cai_chen_affinis_34C)
+dose.p(mod.cai_chen_affinis_34C, p=0.5)
+
+# Data for P. affinis acclimated to 37C 
+
+cai_chen_affinis_37C<-data.frame(temp= c(36, 37, 38, 39, 40, 41, 42),
+                        alive=c(20, 20, 20, 20*0.6, 20*0.3, 0, 0),
+                        dead=c(0, 0, 0, 20*0.4, 20*0.7, 20, 20))
+
+mod.cai_chen_affinis_37C<-glm(cbind(alive, dead) ~ temp, family=binomial, data=cai_chen_affinis_37C)
+dose.p(mod.cai_chen_affinis_37C, p=0.5)
+
+
+# Data for P. affinis acclimated to 38C 
+
+cai_chen_affinis_38C<-data.frame(temp= c(36, 37, 38, 39, 40, 41, 42),
+                        alive=c(20, 20, 20, 20*0.65, 20*0.2, 0, 0),
+                        dead=c(0, 0, 20, 20*0.35, 20*0.8, 20, 20))
+
+mod.cai_chen_affinis_38C<-glm(cbind(alive, dead) ~ temp, family=binomial, data=cai_chen_affinis_38C)
+dose.p(mod.cai_chen_affinis_38C, p=0.5)
+
+```
+
+
+# Chen and Chen 1999 
+
+```{r}
+#################### 25 ppt salinity #######################
+
+# Data for animals acclimated to 20C, at 25 ppt salinity
+
+chen_chen_20C_25ppt<-data.frame(temp= c(30, 31, 32, 33, 34),
+                        alive=c(19, 14, 10, 2, 0),
+                        dead=c(1, 6, 10, 18, 20))
+
+mod.chen_chen_20C_25ppt<-glm(cbind(alive, dead) ~ temp, family=binomial, data=chen_chen_20C_25ppt)
+dose.p(mod.chen_chen_20C_25ppt, p=0.5)
+
+
+# Data for animals acclimated to 25C, at 25 ppt salinity
+
+chen_chen_25C_25ppt<-data.frame(temp= c(31, 32, 33, 34, 35),
+                        alive=c(18, 12, 3, 0, 0),
+                        dead=c(2, 8, 17, 20, 20))
+
+mod.chen_chen_25C_25ppt<-glm(cbind(alive, dead) ~ temp, family=binomial, data=chen_chen_25C_25ppt)
+dose.p(mod.chen_chen_25C_25ppt, p=0.5)
+
+
+# Data for animals acclimated to 30C, at 25 ppt salinity
+
+chen_chen_30C_25ppt<-data.frame(temp= c(32, 33, 34, 35, 36),
+                        alive=c(14, 6, 1, 0, 0),
+                        dead=c(6, 14, 19, 20, 20))
+
+mod.chen_chen_30C_25ppt<-glm(cbind(alive, dead) ~ temp, family=binomial, data=chen_chen_30C_25ppt)
+dose.p(mod.chen_chen_30C_25ppt, p=0.5)
+
+################## 30 ppt salinity #####################
+
+# Data for animals acclimated to 20C, at 30 ppt salinity
+
+chen_chen_20C_30ppt<-data.frame(temp= c(30, 31, 32, 33, 34),
+                        alive=c(18, 12, 9, 1, 0),
+                        dead=c(2, 8, 11, 19, 20))
+
+mod.chen_chen_20C_30ppt<-glm(cbind(alive, dead) ~ temp, family=binomial, data=chen_chen_20C_30ppt)
+dose.p(mod.chen_chen_20C_30ppt, p=0.5)
+
+
+# Data for animals acclimated to 25C, at 30 ppt salinity
+
+chen_chen_25C_30ppt<-data.frame(temp= c(31, 32, 33, 34, 35),
+                        alive=c(18, 10, 2, 0, 0),
+                        dead=c(2, 10, 18, 20, 20))
+
+mod.chen_chen_25C_30ppt<-glm(cbind(alive, dead) ~ temp, family=binomial, data=chen_chen_25C_30ppt)
+dose.p(mod.chen_chen_25C_30ppt, p=0.5)
+
+
+# Data for animals acclimated to 30C, at 30 ppt salinity
+
+chen_chen_30C_30ppt<-data.frame(temp= c(32, 33, 34, 35, 36),
+                        alive=c(12, 4, 1, 0, 0),
+                        dead=c(8, 16, 19, 20, 20))
+
+mod.chen_chen_30C_30ppt<-glm(cbind(alive, dead) ~ temp, family=binomial, data=chen_chen_30C_30ppt)
+dose.p(mod.chen_chen_30C_30ppt, p=0.5)
+
+
+
+################## 35 ppt salinity #####################
+
+# Data for animals acclimated to 20C, at 35 ppt salinity
+
+chen_chen_20C_35ppt<-data.frame(temp= c(30, 31, 32, 33, 34),
+                        alive=c(18, 4, 1, 0, 0),
+                        dead=c(2, 16, 19, 20, 20))
+
+mod.chen_chen_20C_35ppt<-glm(cbind(alive, dead) ~ temp, family=binomial, data=chen_chen_20C_35ppt)
+dose.p(mod.chen_chen_20C_35ppt, p=0.5)
+
+
+# Data for animals acclimated to 25C, at 35 ppt salinity
+
+chen_chen_25C_35ppt<-data.frame(temp= c(31, 32, 33, 34, 35),
+                        alive=c(17, 8, 1, 0, 0),
+                        dead=c(3, 12, 19, 20, 20))
+
+mod.chen_chen_25C_35ppt<-glm(cbind(alive, dead) ~ temp, family=binomial, data=chen_chen_25C_35ppt)
+dose.p(mod.chen_chen_25C_35ppt, p=0.5)
+
+
+# Data for animals acclimated to 30C, at 35 ppt salinity
+
+chen_chen_30C_35ppt<-data.frame(temp= c(32, 33, 34, 35, 36),
+                        alive=c(11, 3, 1, 0, 0),
+                        dead=c(9, 17, 19, 20, 20))
+
+mod.chen_chen_30C_35ppt<-glm(cbind(alive, dead) ~ temp, family=binomial, data=chen_chen_30C_35ppt)
+dose.p(mod.chen_chen_30C_35ppt, p=0.5)
+
+```
+
+# Lohr et al. 1996
+
+We can convert survival at different temperatures to the temperature animals can tolerate for 1 hour according to Jorgensen et al. 2018, 2021 and Rezende et al. 2014. 
+
+
+```{r}
+static = data.frame(group=c("8.4C_acc", "8.4C_acc", "8.4C_acc", "8.4C_acc", "16C_acc", "16C_acc", "16C_acc", "16C_acc", "20C_acc", "20C_acc", "20C_acc"), 
+                    t_coma=c(547, 17, 5.5, 2, 2593, 111.5, 15, 2, 254.5, 27.5, 3), 
+                    assay_temp=c(24, 26, 28, 30, 24, 26, 28, 30, 26, 28, 30))
+
+mod.8.4C<-lm(log10(t_coma)~assay_temp, data=subset(static, group=="8.4C_acc"))
+chemCal::inverse.predict(mod.8.4C, log10(60))
+
+mod.16C<-lm(log10(t_coma)~assay_temp, data=subset(static, group=="16C_acc"))
+chemCal::inverse.predict(mod.16C, log10(60))
+
+mod.20C<-lm(log10(t_coma)~assay_temp, data=subset(static, group=="20C_acc"))
+chemCal::inverse.predict(mod.20C, log10(60))
+
+```
+
+
+# Bishai 1960
+
+We can convert survival at different temperatures to the temperature animals can tolerate for 1 hour according to Jorgensen et al. 2018, 2021 and Rezende et al. 2014. 
+
+
+```{r}
+### Data for Salmo salar
+
+static.salar = data.frame(group=c("5C_acc", "5C_acc", "5C_acc", "5C_acc", "10C_acc", "10C_acc", "10C_acc", "20C_acc", "20C_acc", "20C_acc"), 
+                    t_coma=c(60, 120, 180, 360, 60, 120, 720, 600, 720, 2880), 
+                    assay_temp=c(25, 24, 23, 22.5, 26, 25, 24, 26, 25, 24))
+
+mod.5C.salar<-lm(log10(t_coma)~assay_temp, data=subset(static.salar, group=="5C_acc"))
+chemCal::inverse.predict(mod.5C.salar, log10(60))
+
+mod.10C.salar<-lm(log10(t_coma)~assay_temp, data=subset(static.salar, group=="10C_acc"))
+chemCal::inverse.predict(mod.10C.salar, log10(60))
+
+mod.20C.salar<-lm(log10(t_coma)~assay_temp, data=subset(static.salar, group=="20C_acc"))
+chemCal::inverse.predict(mod.20C.salar, log10(60))
+
+## Data for the sea trout
+
+static.sea = data.frame(group=c("5C_acc", "5C_acc", "5C_acc", "5C_acc", "10C_acc", "10C_acc", "10C_acc", "20C_acc", "20C_acc", "20C_acc"), 
+                    t_coma=c(60, 1020, 1440, 1440, 60, 180, 2880, 420, 840, 3600), 
+                    assay_temp=c(25, 24, 23, 22.5, 26, 25, 24, 26, 25, 24))
+
+mod.5C.sea<-lm(log10(t_coma)~assay_temp, data=subset(static.sea, group=="5C_acc"))
+chemCal::inverse.predict(mod.5C.sea, log10(60))
+
+mod.10C.sea<-lm(log10(t_coma)~assay_temp, data=subset(static.sea, group=="10C_acc"))
+chemCal::inverse.predict(mod.10C.sea, log10(60))
+
+mod.20C.sea<-lm(log10(t_coma)~assay_temp, data=subset(static.sea, group=="20C_acc"))
+chemCal::inverse.predict(mod.20C.sea, log10(60))
+
+
+## Data for the sea trout
+
+static.brown = data.frame(group=c("5C_acc", "5C_acc", "5C_acc", "5C_acc", "10C_acc", "10C_acc", "10C_acc", "20C_acc", "20C_acc", "20C_acc"), 
+                    t_coma=c(60, 3720, 6000, 7800, 720, 1440, 4320, 1440, 2160, 5160), 
+                    assay_temp=c(25, 24, 23, 22.5, 26, 25, 24, 26, 25, 24))
+
+mod.5C.brown<-lm(log10(t_coma)~assay_temp, data=subset(static.brown, group=="5C_acc"))
+chemCal::inverse.predict(mod.5C.brown, log10(60))
+
+mod.10C.brown<-lm(log10(t_coma)~assay_temp, data=subset(static.brown, group=="10C_acc"))
+chemCal::inverse.predict(mod.10C.brown, log10(60))
+
+mod.20C.brown<-lm(log10(t_coma)~assay_temp, data=subset(static.brown, group=="20C_acc"))
+chemCal::inverse.predict(mod.20C.brown, log10(60))
+
+```
+
+
+
+# Bishai 1960
+
+We can convert survival at different temperatures to the temperature animals can tolerate for 1 hour according to Jorgensen et al. 2018, 2021 and Rezende et al. 2014. 
+
+
+```{r}
+### Data for coho salmon
+
+static.coho = data.frame(group=c("5C_acc_NS", "5C_acc_NS", "5C_acc_NS", "5C_acc_NS", "5C_acc_NS", "5C_acc_NS",
+                                  "5C_acc_SS", "5C_acc_SS", "5C_acc_SS", "5C_acc_SS", "5C_acc_SS", "5C_acc_SS",
+                                  "10C_acc_NS", "10C_acc_NS", "10C_acc_NS", "10C_acc_NS", "10C_acc_NS",
+                                  "10C_acc_SS", "10C_acc_SS", "10C_acc_SS", "10C_acc_SS", "10C_acc_SS", "10C_acc_SS", 
+                                  "15C_acc_NS", "15C_acc_NS", "15C_acc_NS", "15C_acc_NS", "15C_acc_NS", "15C_acc_NS",
+                                  "15C_acc_SS", "15C_acc_SS", "15C_acc_SS", "15C_acc_SS", "15C_acc_SS", "15C_acc_SS", 
+                                  "20C_acc_NS", "20C_acc_NS", "20C_acc_NS", "20C_acc_NS", "20C_acc_NS", "20C_acc_NS",
+                                  "20C_acc_SS", "20C_acc_SS", "20C_acc_SS", "20C_acc_SS", "20C_acc_SS", "20C_acc_SS"), 
+                    t_coma=c(810, 605, 577, 390, 266, 21.5,
+                             626, 580, 435, 229, 186, 20, 
+                             1085, 540, 550, 192, 23, 
+                             960, 480, 480, 282.5, 193.5, 35.5,
+                             555, 502.5, 517.5, 645, 79, 20.5,
+                             247, 115, 124.5, 86, 52.5, 38,  
+                             810, 780, 840, 197, 43, 20,
+                             317.5, 570, 266, 115, 42.5, 16), 
+                    assay_temp=c(5, 10, 15, 20, 23, 25,
+                             5, 10, 15, 20, 23, 25, 
+                             15, 20, 23, 25, 27, 
+                             10, 15, 20, 23, 25, 27,
+                             15, 20, 23, 26, 27, 28,
+                             15, 20, 23, 26, 27, 28, 
+                             20, 23, 25, 27, 28, 29,
+                             20, 23, 25, 27, 28, 29))
+# NS groups
+
+mod.5C.coho.NS<-lm(log10(t_coma)~assay_temp, data=subset(static.coho, group=="5C_acc_NS"))
+chemCal::inverse.predict(mod.5C.coho.NS, log10(60))
+
+mod.10C.coho.NS<-lm(log10(t_coma)~assay_temp, data=subset(static.coho, group=="10C_acc_NS"))
+chemCal::inverse.predict(mod.10C.coho.NS, log10(60))
+
+mod.15C.coho.NS<-lm(log10(t_coma)~assay_temp, data=subset(static.coho, group=="15C_acc_NS"))
+chemCal::inverse.predict(mod.15C.coho.NS, log10(60))
+
+mod.20C.coho.NS<-lm(log10(t_coma)~assay_temp, data=subset(static.coho, group=="20C_acc_NS"))
+chemCal::inverse.predict(mod.20C.coho.NS, log10(60))
+
+# SS groups
+
+mod.5C.coho.SS<-lm(log10(t_coma)~assay_temp, data=subset(static.coho, group=="5C_acc_SS"))
+chemCal::inverse.predict(mod.5C.coho.SS, log10(60))
+
+mod.10C.coho.SS<-lm(log10(t_coma)~assay_temp, data=subset(static.coho, group=="10C_acc_SS"))
+chemCal::inverse.predict(mod.10C.coho.SS, log10(60))
+
+mod.15C.coho.SS<-lm(log10(t_coma)~assay_temp, data=subset(static.coho, group=="15C_acc_SS"))
+chemCal::inverse.predict(mod.15C.coho.SS, log10(60))
+
+mod.20C.coho.SS<-lm(log10(t_coma)~assay_temp, data=subset(static.coho, group=="20C_acc_SS"))
+chemCal::inverse.predict(mod.20C.coho.SS, log10(60))
+
+
+## Data for chinook salmon
+
+static.chinook = data.frame(group=c(
+                                  "15C_acc_NS", "15C_acc_NS", "15C_acc_NS", "15C_acc_NS", "15C_acc_NS", "15C_acc_NS",
+                                  "15C_acc_SS", "15C_acc_SS", "15C_acc_SS", "15C_acc_SS", "15C_acc_SS", "15C_acc_SS", 
+                                  "20C_acc_NS", "20C_acc_NS", "20C_acc_NS", "20C_acc_NS", "20C_acc_NS", "20C_acc_NS",
+                                  "20C_acc_SS", "20C_acc_SS", "20C_acc_SS", "20C_acc_SS", "20C_acc_SS", "20C_acc_SS"), 
+                    t_coma=c(
+                             675, 820, 540, 255, 52.5, 10.5,
+                             315, 165, 123, 122.5, 16.5, 6, 
+                             450, 435, 570, 97, 48.5, 17, 
+                             75, 176, 42.5, 44, 22, 6.5), 
+                    assay_temp=c(
+                             15, 20, 23, 26, 27, 28,
+                             15, 20, 23, 26, 27, 28, 
+                             20, 23, 25, 27, 28, 29,
+                             20, 23, 25, 27, 28, 29))
+# NS groups
+
+mod.15C.chinook.NS<-lm(log10(t_coma)~assay_temp, data=subset(static.chinook, group=="15C_acc_NS"))
+chemCal::inverse.predict(mod.15C.chinook.NS, log10(60))
+
+mod.20C.chinook.NS<-lm(log10(t_coma)~assay_temp, data=subset(static.chinook, group=="20C_acc_NS"))
+chemCal::inverse.predict(mod.20C.chinook.NS, log10(60))
+
+# SS groups
+
+mod.15C.chinook.SS<-lm(log10(t_coma)~assay_temp, data=subset(static.chinook, group=="15C_acc_SS"))
+chemCal::inverse.predict(mod.15C.chinook.SS, log10(60))
+
+mod.20C.chinook.SS<-lm(log10(t_coma)~assay_temp, data=subset(static.chinook, group=="20C_acc_SS"))
+chemCal::inverse.predict(mod.20C.chinook.SS, log10(60))
+
+
+
+## Data for steelhead
+
+static.steel = data.frame(group=c(
+                                  "10C_acc_NS", "10C_acc_NS", "10C_acc_NS", "10C_acc_NS", "10C_acc_NS", "10C_acc_NS",
+                                  "10C_acc_SS", "10C_acc_SS", "10C_acc_SS", "10C_acc_SS", "10C_acc_SS", "10C_acc_SS", 
+                                  "15C_acc_NS", "15C_acc_NS", "15C_acc_NS", "15C_acc_NS", "15C_acc_NS", "15C_acc_NS",
+                                  "15C_acc_SS", "15C_acc_SS", "15C_acc_SS", "15C_acc_SS", "15C_acc_SS", "15C_acc_SS"), 
+                    t_coma=c(
+                             307, 340, 493, 450, 165, 17,
+                             104, 75, 105, 74, 38, 15,
+                             840, 630, 645, 435, 58, 23.5,
+                             45, 94, 52.5, 43, 19, 19), 
+                    assay_temp=c(
+                             10, 15, 20, 23, 25, 27,
+                             10, 15, 20, 23, 25, 27,
+                             15, 20, 23, 26, 27, 28,
+                             15, 20, 23, 26, 27, 28 ))
+# NS groups
+
+mod.10C.steel.NS<-lm(log10(t_coma)~assay_temp, data=subset(static.steel, group=="10C_acc_NS"))
+chemCal::inverse.predict(mod.10C.steel.NS, log10(60))
+
+mod.15C.steel.NS<-lm(log10(t_coma)~assay_temp, data=subset(static.steel, group=="15C_acc_NS"))
+chemCal::inverse.predict(mod.15C.steel.NS, log10(60))
+
+
+# SS groups
+
+mod.10C.steel.SS<-lm(log10(t_coma)~assay_temp, data=subset(static.steel, group=="10C_acc_SS"))
+chemCal::inverse.predict(mod.10C.steel.SS, log10(60))
+
+mod.15C.steel.SS<-lm(log10(t_coma)~assay_temp, data=subset(static.steel, group=="15C_acc_SS"))
+chemCal::inverse.predict(mod.15C.steel.SS, log10(60))
+
+
+```
+
+# McCauley 1963 
+
+We can convert survival at different temperatures to the temperature animals can tolerate for 1 hour according to Jorgensen et al. 2018, 2021 and Rezende et al. 2014. 
+
+The data from this study was digitised from figure 2 and imported into a csv file. 
+
+```{r}
+static=read_csv("datasets/McCauley_1963.csv")
+
+# Animals acclimated to 15C
+mod.15C<-lm(log10(t_coma)~assay_temp, data=subset(static, group=="15_acc"))
+chemCal::inverse.predict(mod.15C, log10(60))
+
+# Animals acclimated to 20C
+mod.20C<-lm(log10(t_coma)~assay_temp, data=subset(static, group=="20_acc"))
+chemCal::inverse.predict(mod.20C, log10(60))
+```
+
+
+
+
