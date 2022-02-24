@@ -1,9 +1,14 @@
 ---
-title: "Statistical Analyses - Developmental plasticity of heat tolerance"
-author: Patrice Pottier, Samantha Burke, Rose Zhang, Szymon Drobniak, Daniel Noble,
-  Lisa Schwanz, Shinichi Nakagawa
+title: "Developmental plasticity in thermal tolerance is insufficient to compensate for rising temperatures: a meta-analysis"
+author: Patrice Pottier, Samantha Burke, Rose Y. Zhang, Daniel W.A. Noble,
+  Lisa E. Schwanz, Szymon M. Drobniak, Shinichi Nakagawa
+subtitle: Supporting Information S2
 date: "latest update: `r format(Sys.time(), '%d %B %Y')`"
-output: rmdformats::readthedown
+output: 
+  rmdformats::readthedown:
+    code_folding: hide
+    code_download: true
+    toc_depth: 4
 editor_options: 
   chunk_output_type: inline
 ---
@@ -15,7 +20,8 @@ knitr::opts_chunk$set(
   message = FALSE,
   warning = FALSE, 
   tidy = TRUE,
-  cache = TRUE
+  cache = TRUE,
+  echo=TRUE
 )
 ```
 
@@ -2599,7 +2605,7 @@ load(here("Rdata", "publication_bias.RData")) # Load the output of the models to
 
 ## *Leave-one-out analyses* {.tabset .tabset_fade .tabset_pills}
 
-Here, we iteratively removed one study, one species, one cohort, or one independent comparison at a time and investigated how it affected the overall mean. 
+Here, we iteratively removed one study or one species at a time and investigated how it affected the overall mean. We also tried to iteratively remove one independent comparison (shared_trt_ID) because it was too computationally extensive. 
 
 ### Leave one study out
 
@@ -2743,9 +2749,10 @@ results.Leave1speciesout %>%
                                                           kable()%>% kable_styling("striped", position="left")
 ```
 
-### Leave one independent comparison out
 
-```{r, fig.height=8, fig.width=12, eval=F}
+
+```{r, fig.height=8, fig.width=12, eval=F, include=F}
+### Leave one independent comparison out
 d$shared_trt_ID<-as.factor(d$shared_trt_ID)
 d<-as.data.frame(d) # Only work with a dataframe
 VCV_matrix<-list() # will need new VCV matrices because the sample size will be iteratively reduced
@@ -2797,7 +2804,7 @@ save(results.Leave1trtout, file=here("RData","Leaveonetreatmentout.RData"))
 ```
 
 
-```{r LOO_shared_trt_results, fig.height=8, fig.width=12}
+```{r LOO_shared_trt_results, fig.height=8, fig.width=12, eval=F, include=F}
 load(here("Rdata", "Leaveonetreatmentout.RData")) # Load the output of the models to avoid running them 
 
 kable(results.Leave1trtout)%>% kable_styling("striped", position="left") %>% scroll_box(width="100%", height="500px") # Table of the results from all models
@@ -3439,7 +3446,7 @@ p4<-p3 + new_scale_fill() + geom_fruit(geom=geom_bar, mapping=aes(x=n_es, fill=c
 
 p4
 
-ggsave("output/phylo_tree_pub.svg", width=15, height=15, dpi=1500)
+#ggsave("output/phylo_tree_pub.svg", width=15, height=15, dpi=1500)
 ```
 
 
@@ -3460,7 +3467,7 @@ p2<-my.orchard(mod.adjusted_mean, mod="1", xlab="dARR", alpha=0.075, data=d, gro
 p1/p2
 
 
-ggsave("output/meta-analysis_pub.svg", width=11, height=11, dpi=800)
+#ggsave("output/meta-analysis_pub.svg", width=11, height=11, dpi=800)
 
 ```
 
@@ -3496,7 +3503,7 @@ my.orchard(mod.habitat_het_reordered, mod="habitat_reordered", xlab="dARR", alph
      annotate("text", size=6.5, y=1.75, x=2.08, label=paste("0.209 [0.079, 0.338]"))
      
 
-ggsave("output/habitat_metareg_pub.svg", width=12, height=8, dpi=800)
+#("output/habitat_metareg_pub.svg", width=12, height=8, dpi=800)
 
 ```
 
@@ -3540,7 +3547,7 @@ my.orchard(mod.taxa_het_reordered, mod="taxonomic_group_reordered", xlab="dARR",
      annotate("text", size=6, y=1.75, x=4.14, label=paste("0.199 [-0.055, 0.454]"))+
      annotate("text", size=6, y=1.75, x=5.14, label=paste("0.254 [0.004, 0.504]"))
 
-ggsave("output/taxa_metareg_pub.svg", width=12, height=12, dpi=800)
+#ggsave("output/taxa_metareg_pub.svg", width=12, height=12, dpi=800)
 
 
 ```
@@ -3577,7 +3584,7 @@ p1<-my.orchard(mod.design_het_reordered, mod="design_reordered", xlab="dARR", al
      annotate("text", size=6, y=1.75, x=6.15, label=paste("0.230 [0.085, 0.376]")) + # A
      ylim(-2.5,3)
 
-ggsave("output/design_metareg_pub.png", width=12, height=12, dpi=800)
+#ggsave("output/design_metareg_pub.png", width=12, height=12, dpi=800)
 
      
 p2<-my.orchard(mod.persist_het, mod="brought_common_temp", xlab="dARR", alpha=0.1, data=d, group="species_ID", whisker=0.075)+
@@ -3586,12 +3593,12 @@ p2<-my.orchard(mod.persist_het, mod="brought_common_temp", xlab="dARR", alpha=0.
      annotate("text", size=6, y=1.75, x=2.1, label=paste("0.048 [-0.095, 0.192]"))+
      ylim(-2.5, 3)
 
-ggsave("output/persist_metareg_pub.png", width=12, height=8, dpi=800)
+#ggsave("output/persist_metareg_pub.png", width=12, height=8, dpi=800)
 
 
 p1/p2 + plot_layout(heights=c(12,8))
 
-ggsave("output/designs_persist.svg", width=14, height=20, dpi=1400)
+#ggsave("output/designs_persist.svg", width=14, height=20, dpi=1400)
 
 ```
 
