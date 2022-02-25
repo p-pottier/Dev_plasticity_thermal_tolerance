@@ -1,5 +1,8 @@
 # Developmental plasticity in thermal tolerance is insufficient to compensate for rising temperatures: a meta-analysis
 
+This manuscript has been submitted to Ecology Letters and the pre-print is available at: https://www.authorea.com/doi/full/10.22541/au.164573834.49438532/v1 
+
+Cite as: Pottier, P., Burke, S., Zhang, R.Y., Noble, D.W.A., Schwanz, L.E., Drobniak, S.M., & Nakagawa, S.  Developmental plasticity in thermal tolerance is insufficient to compensate for rising temperatures: a meta-analysis. Authorea. [![DOI](http://doi.org/10.22541/au.164573834.49438532/v1)]
 
 This repository contains bibliographic files, data and analysis code for this project.
 
@@ -132,6 +135,3 @@ Note that the figures presented here differ from the figures presented in `/Data
 * `all_documents_included_meta-analysis.bib`: Bibliographic file containing all studies included in the meta-analysis
 * `all_documents_screened_full_text.bib`: Bibliographic file containing all studies screened for eligibility (full text)
 * `all_documents_screened_title_abstract_keyword.bib`: Bibliographic file containing all studies screened for title, abstract and keywords. 
-
-
-* 
