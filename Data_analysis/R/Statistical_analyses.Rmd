@@ -1087,10 +1087,12 @@ kable(table_bias) %>% kable_styling("striped", position="center")
 
 ```{r}
 d$phylogeny<-d$unique_name # Rename "unique_name" to "phylogeny" for the models
-save(d, 
-     VCV_dARR, 
+save(VCV_dARR, 
      phylo_matrix,
-     file=here("RData","processed_data.RData"))
+     file=here("RData","Var_and_phylo_matrices.RData"))
+
+write_csv(d, file=here("data", "Processed_data.csv")) 
+
 
 load(here("Rdata", "processed_data.RData"))  
 ```
