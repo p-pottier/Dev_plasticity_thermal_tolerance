@@ -1094,7 +1094,8 @@ save(VCV_dARR,
 write_csv(d, file=here("data", "Processed_data.csv")) 
 
 
-load(here("Rdata", "processed_data.RData"))  
+load(here("Rdata", "Var_and_phylo_matrices.RData"))  
+d.raw<-read_csv("data/Processed_data.csv")
 ```
 
 
@@ -3379,7 +3380,7 @@ d.maturity<-filter(d, age_maturity!="NA")
 mod.maturity<-run.model(d.maturity, ~ log(age_maturity)) 
 summary(mod.maturity) # 971 effect sizes
 
-plot_continuous(d.maturity, mod.maturity, log(d.maturity.noNA$age_maturity), "ln age at sexual maturity (years)")
+plot_continuous(d.maturity, mod.maturity, log(d.maturity$age_maturity), "ln age at sexual maturity (years)")
 ```
 
 ### Direct effects
@@ -3399,6 +3400,18 @@ summary(mod.maturity.persistent) # 219 effect sizes
 
 plot_continuous(d.maturity.persistent, mod.maturity.persistent, log(d.maturity.persistent$age_maturity), "ln age at sexual maturity (years)")
 ```
+
+```{r, include=F, eval=F}
+save(mod.body_mass,
+     mod.body_mass.direct,
+     mod.body_mass.persistent,
+     mod.maturity,
+     mod.maturity.direct,
+     mod.maturity.persistent, 
+     
+     file=here("RData","Post-hoc_models.RData"))
+```
+
 
 
 # **Figures for publication**
@@ -3501,7 +3514,7 @@ p<-ggtree(tree_for_plot, layout="circular", lwd=0.75)
 p <- p %<+% d.tree_plot # link plot to data
 p2<- p+  geom_fruit(geom=geom_tile, mapping=aes(fill=metric_type), width=0.07, offset=0.085, col="black", size=0.3)+scale_fill_manual(values=c("gray70", "white","black"), name="Metric")+theme(legend.direction = "vertical")
 
-p3<- p2 + new_scale_fill()+ geom_fruit(geom=geom_tile, mapping=aes(fill=direct_persistent),offset=0.1,width=0.07, col="black", size=0.3)+scale_fill_manual(values=c("#9994EA","#EAD295","#95EA99"), name="Design")+theme(legend.direction = "vertical")
+p3<- p2 + new_scale_fill()+ geom_fruit(geom=geom_tile, mapping=aes(fill=direct_persistent),offset=0.1,width=0.07, col="black", size=0.3)+scale_fill_manual(values=c("#EAD295","#9994EA","#95EA99"), name="Design")+theme(legend.direction = "vertical")
 
 d.tree_plot$n_es=as.numeric(d.tree_plot$n_es)
 
@@ -3511,7 +3524,7 @@ p4<-p3 + new_scale_fill() + geom_fruit(geom=geom_bar, mapping=aes(x=n_es, fill=c
 
 p4
 
-#ggsave("output/phylo_tree_pub.svg", width=15, height=15, dpi=1500)
+#ggsave("output/phylo_tree_pub.svg", width=15, height=15, dpi=3000)
 ```
 
 
