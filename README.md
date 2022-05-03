@@ -8,7 +8,11 @@ Below is a description of the different folders and their content. Please feel f
 
 ### Bibliographic_searches 
 
-This folder contains all bibliographic files generated during literature searches and further used for eligibility assessment.
+This folder contains all bibliographic files generated during literature searches and further used for eligibility assessment. Included are also references used to obtain the age at sexual maturity for the species in our dataset. 
+
+#### Age_sexual_maturity
+
+* `Age_maturity_data_references.RIS` : bibliographic file containing the references used to retrieve the age at sexual maturity for the species included in our synthesis. 
 
 #### All_results_combined
 
