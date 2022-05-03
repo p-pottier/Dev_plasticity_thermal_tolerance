@@ -452,10 +452,10 @@ ggbetweenstats(data=d, y=precision, x=exp_design) # Precision variation between 
 ```
 
 
-### Acute vs. persistent effects 
+### Direct vs. persistent effects 
 
 ```{r, fig.width=12, fig.height=10}
-# Plot variation in dARR between acute and persistent effect sizes
+# Plot variation in dARR between direct and persistent effect sizes
 ggplot(data=d, aes(y=dARR, x=brought_common_temp, col=brought_common_temp,size=precision))+
                      geom_hline(yintercept = 0,linetype = 2, colour = "black",alpha=0.5)+ 
                      geom_jitter(alpha=0.5)+ 
@@ -465,7 +465,7 @@ ggplot(data=d, aes(y=dARR, x=brought_common_temp, col=brought_common_temp,size=p
 
 ggbetweenstats(data=d, y=dARR, x=brought_common_temp)
 
-# Plot variation in precision between acute and persistent effect sizes
+# Plot variation in precision between direct and persistent effect sizes
 ggplot(data=d, aes(y=precision, x=brought_common_temp, col=brought_common_temp))+
                      geom_hline(yintercept = 0,linetype = 2, colour = "black",alpha=0.5)+ 
                      geom_jitter(alpha=0.5)+ 
@@ -874,28 +874,28 @@ tree_for_plot<-drop.tip(phylo_branched, setdiff(phylo_branched$tip.label, phylo_
 
 
 design_dat<-d.tree %>% group_by(tip.label) %>% summarise( 
-                                               acute=brought_common_temp=="no", 
+                                               direct=brought_common_temp=="no", 
                                                persistent=brought_common_temp=="yes",
                                                CTmax=metric=="CTmax",
-                                               LT50=metric=="LT50") # Summarise, for each species, whether they tested acute effects, persistent effects, CTmax, or LT50
+                                               LT50=metric=="LT50") # Summarise, for each species, whether they tested direct effects, persistent effects, CTmax, or LT50
 
 design_dat<-distinct(design_dat) # Only keep unique rows
-design_dat$acute=as.numeric(design_dat$acute) # convert TRUE/FALSE to binary values
+design_dat$direct=as.numeric(design_dat$direct) # convert TRUE/FALSE to binary values
 design_dat$persistent=as.numeric(design_dat$persistent) # convert TRUE/FALSE to binary values
 design_dat$CTmax=as.numeric(design_dat$CTmax)  #convert TRUE/FALSE to binary values
 design_dat$LT50=as.numeric(design_dat$LT50) #convert TRUE/FALSE to binary values
 
-design_dat<-design_dat %>% group_by(tip.label) %>% summarise(acute=sum(acute),        
+design_dat<-design_dat %>% group_by(tip.label) %>% summarise(direct=sum(direct),        
                                                              persistent=sum(persistent),
                                                              CTmax=sum(CTmax),
                                                              LT50=sum(LT50))# calculate the sum for each species (i.e. if 1, the species has the given design or metric)   
 
 # In some cases, values were repeated, so need to replace "2" values by "1"
-design_dat$acute[design_dat$acute=="2"] <- "1" 
+design_dat$direct[design_dat$direct=="2"] <- "1" 
 design_dat$persistent[design_dat$persistent=="2"] <- "1"
 design_dat$CTmax[design_dat$CTmax=="2"] <- "1"
                                                                
-design_dat$acute=as.factor(design_dat$acute) # convert back to factor for the plot
+design_dat$direct=as.factor(design_dat$direct) # convert back to factor for the plot
 design_dat$persistent=as.factor(design_dat$persistent)
 design_dat$CTmax=as.factor(design_dat$CTmax)
 design_dat$LT50=as.factor(design_dat$LT50)
@@ -903,8 +903,8 @@ design_dat$LT50=as.factor(design_dat$LT50)
 
 design_dat <- mutate(design_dat, 
                      persistence = 
-                          ifelse(acute=="1"&persistent=="1", "both",
-                          ifelse(acute=="1"&persistent=="0", "acute", "persistent"))) # If both acute and persistent, indicate "both", if only acute, indicate "acute", otherwise indicate "persistent"
+                          ifelse(direct=="1"&persistent=="1", "both",
+                          ifelse(direct=="1"&persistent=="0", "direct", "persistent"))) # If both direct and persistent, indicate "both", if only direct, indicate "direct", otherwise indicate "persistent"
 
 design_dat<-mutate(design_dat, metrics = 
                      ifelse(CTmax=="1"&LT50=="1", "both", 
@@ -918,7 +918,7 @@ p<-ggtree(tree_for_plot, layout="circular", lwd=0.75) # Circular tree
 p <- p %<+% d.tree_plot # link plot to data
 p2<- p+  geom_fruit(geom=geom_tile, mapping=aes(fill=metrics), width=0.07, offset=0.085, col="gray30")+scale_fill_manual(values=c("gray70", "white","black")) # Create tiles to indicate which metric was used for this species
 
-p3<- p2 + new_scale_fill()+ geom_fruit(geom=geom_tile, mapping=aes(fill=persistence),offset=0.1,width=0.07, col="gray30")+scale_fill_manual(values=c("#7570B3","#D95F02","#1B9E77")) # Create tiles to indicate whether acute or persistent effects were assessed
+p3<- p2 + new_scale_fill()+ geom_fruit(geom=geom_tile, mapping=aes(fill=persistence),offset=0.1,width=0.07, col="gray30")+scale_fill_manual(values=c("#7570B3","#D95F02","#1B9E77")) # Create tiles to indicate whether direct or persistent effects were assessed
 
 d.tree_plot$n_es=as.numeric(d.tree_plot$n_es) # Convert to numeric 
 
@@ -952,14 +952,14 @@ d %>%
     `Species` = n_distinct(genus_species), 
     `Effect sizes` = n_distinct(es_ID),
     
-# Number of studies, species, and effect sizes for acute and persistent designs
-    `Studies (Acute)` = n_distinct(study_ID[brought_common_temp=="no"]),
+# Number of studies, species, and effect sizes for direct and persistent designs
+    `Studies (Direct)` = n_distinct(study_ID[brought_common_temp=="no"]),
     `Studies (Persistent)` = n_distinct(study_ID[brought_common_temp=="yes"]),
     
-    `Species (Acute)` = n_distinct(genus_species[brought_common_temp=="no"]),
+    `Species (Direct)` = n_distinct(genus_species[brought_common_temp=="no"]),
     `Species (Persistent)` = n_distinct(genus_species[brought_common_temp=="yes"]),   
     
-    `Effect sizes (Acute)` = n_distinct(es_ID[brought_common_temp=="no"]),  
+    `Effect sizes (Direct)` = n_distinct(es_ID[brought_common_temp=="no"]),  
     `Effect sizes (Persistent)` = n_distinct(es_ID[brought_common_temp=="yes"]),  
    
 # Number of studies, species, and effect sizes for each habitat
@@ -1796,7 +1796,7 @@ summary(mod.taxa_het_cont_fish_ref)
 
 ## *Persistence of developmental effects* {.tabset .tabset_fade .tabset_pills}
 
-Here the effect sizes estimating the "acute" and "persistent" effects of developmental temperatures on heat tolerance are compared.
+Here the effect sizes estimating the "direct" and "persistent" effects of developmental temperatures on heat tolerance are compared.
 
 ### Individual coefficients
 
@@ -2221,9 +2221,9 @@ save(mod.habitat,  # Habitat without intercept
      mod.taxa_het_cont_fish_ref, # Contrasts between taxa, with fishes as the reference group, and  heteroscedasticity modeled
 
      mod.persist, # Persistence of developmental effects, without intercept
-     mod.persist_cont, # Contrast between acute and persistent effects
+     mod.persist_cont, # Contrast between direct and persistent effects
      mod.persist_het, # Persistence of developmental effects without intercept, and heteroscedasticity modeled (results represented in the MS)
-     mod.persist_het_cont, # Contrasts between acute and persistent effects, with heteroscedasticity modeled
+     mod.persist_het_cont, # Contrasts between direct and persistent effects, with heteroscedasticity modeled
      
      mod.design, # Type of experimental design (life history variation), without intercept
      mod.design_cont_A_ref, # Contrasts between experimental designs, with design A as the reference
@@ -2825,26 +2825,26 @@ results.Leave1trtout %>%
 
 ### 
 
-## *Analyses with acute designs only* {.tabset .tabset_fade .tabset_pills}
+## *Analyses with direct designs only* {.tabset .tabset_fade .tabset_pills}
 
 ### Habitat
 
 #### Individual coefficients 
 
 ```{r, fig.height=10, fig.width=12}
-d.acute<-filter(d,brought_common_temp=="no")
-mod.acute_habitat<-run.model(d.acute, ~habitat-1)
-summary(mod.acute_habitat)
-mod_results(mod.acute_habitat, mod="habitat",data=d.acute, group="species_ID") 
+d.direct<-filter(d,brought_common_temp=="no")
+mod.direct_habitat<-run.model(d.direct, ~habitat-1)
+summary(mod.direct_habitat)
+mod_results(mod.direct_habitat, mod="habitat",data=d.direct, group="species_ID") 
 
 
-my.orchard(mod.acute_habitat, xlab="dARR", mod="habitat", alpha=0.1, data=d.acute, group="species_ID", whisker=0.07)
+my.orchard(mod.direct_habitat, xlab="dARR", mod="habitat", alpha=0.1, data=d.direct, group="species_ID", whisker=0.07)
 ```
 
 #### Heteroscedasticity check 
 
 ```{r, fig.height=6, fig.width=12}
-qplot(y = sqrt(residuals(mod.acute_habitat)^2), x = fitted(mod.acute_habitat)) + 
+qplot(y = sqrt(residuals(mod.direct_habitat)^2), x = fitted(mod.direct_habitat)) + 
       geom_point() +
       geom_smooth(method = "lm") + 
       geom_hline(yintercept = 0, colour="red") 
@@ -2853,9 +2853,9 @@ qplot(y = sqrt(residuals(mod.acute_habitat)^2), x = fitted(mod.acute_habitat)) +
 #### Individual coefficients (with heteroscedasticity)
 
 ```{r}
-VCV_acute<-make_VCV_matrix(d.acute, V="Var_dARR", cluster="shared_trt_ID", obs="es_ID")
-mod.acute_habitat_het <-  rma.mv(yi=dARR, 
-                           V=VCV_acute, 
+VCV_direct<-make_VCV_matrix(d.direct, V="Var_dARR", cluster="shared_trt_ID", obs="es_ID")
+mod.direct_habitat_het <-  rma.mv(yi=dARR, 
+                           V=VCV_direct, 
                            mods= ~habitat-1,
                            method="REML",
                            test="t",
@@ -2866,26 +2866,26 @@ mod.acute_habitat_het <-  rma.mv(yi=dARR,
                            struct="HCS", 
                            rho=0, 
                            R = list(phylogeny = phylo_matrix),
-                           data=d.acute,
+                           data=d.direct,
                            sparse=TRUE)
-AICc(mod.acute_habitat)
-AICc(mod.acute_habitat_het) 
+AICc(mod.direct_habitat)
+AICc(mod.direct_habitat_het) 
 
-summary(mod.acute_habitat_het)
-mod_results(mod.acute_habitat_het, mod="habitat",data=d.acute, group="species_ID") 
-r2_ml(mod.acute_habitat_het) 
+summary(mod.direct_habitat_het)
+mod_results(mod.direct_habitat_het, mod="habitat",data=d.direct, group="species_ID") 
+r2_ml(mod.direct_habitat_het) 
 
-my.orchard(mod.acute_habitat_het, mod="habitat", xlab="dARR", alpha=0.1, data=d.acute, group="species_ID", whisker=0.07) 
+my.orchard(mod.direct_habitat_het, mod="habitat", xlab="dARR", alpha=0.1, data=d.direct, group="species_ID", whisker=0.07) 
 ```
 
 
-#### Mean acute effects with habitat weighted equally
+#### Mean direct effects with habitat weighted equally
 
 ```{r, fig.width=12, fig.height=8}
-mod.adjusted_acute<-mod_results(model=mod.acute_habitat_het, data=d.acute, mod="1", weights="equal", group="species_ID")
-mod.adjusted_acute$mod_table
+mod.adjusted_direct<-mod_results(model=mod.direct_habitat_het, data=d.direct, mod="1", weights="equal", group="species_ID")
+mod.adjusted_direct$mod_table
 
-my.orchard(mod.adjusted_acute, mod="1", xlab="dARR", alpha=0.1, data=d.acute, group="species_ID", whisker=0.04)
+my.orchard(mod.adjusted_direct, mod="1", xlab="dARR", alpha=0.1, data=d.direct, group="species_ID", whisker=0.04)
 ```
 
 
@@ -2894,17 +2894,17 @@ my.orchard(mod.adjusted_acute, mod="1", xlab="dARR", alpha=0.1, data=d.acute, gr
 #### Individual coefficients 
 
 ```{r, fig.height=10, fig.width=12}
-mod.acute_taxa<-run.model(d.acute, ~taxonomic_group-1)
-summary(mod.acute_taxa)
-mod_results(mod.acute_taxa, mod="taxonomic_group",data=d.acute, group="species_ID") 
+mod.direct_taxa<-run.model(d.direct, ~taxonomic_group-1)
+summary(mod.direct_taxa)
+mod_results(mod.direct_taxa, mod="taxonomic_group",data=d.direct, group="species_ID") 
 
-my.orchard(mod.acute_taxa, xlab="dARR", mod="taxonomic_group", data=d.acute, alpha=0.1, group="species_ID", whisker=0.09)
+my.orchard(mod.direct_taxa, xlab="dARR", mod="taxonomic_group", data=d.direct, alpha=0.1, group="species_ID", whisker=0.09)
 ```
 
 #### Heteroscedasticity check 
 
 ```{r, fig.height=6, fig.width=12}
-qplot(y = sqrt(residuals(mod.acute_taxa)^2), x = fitted(mod.acute_taxa)) + 
+qplot(y = sqrt(residuals(mod.direct_taxa)^2), x = fitted(mod.direct_taxa)) + 
       geom_point() +
       geom_smooth(method = "lm") + 
       geom_hline(yintercept = 0, colour="red") 
@@ -2913,8 +2913,8 @@ qplot(y = sqrt(residuals(mod.acute_taxa)^2), x = fitted(mod.acute_taxa)) +
 #### Individual coefficients (with heteroscedasticity)
 
 ```{r, fig.height=10, fig.width=12}
-mod.acute_taxa_het <-  rma.mv(yi=dARR, 
-                           V=VCV_acute, 
+mod.direct_taxa_het <-  rma.mv(yi=dARR, 
+                           V=VCV_direct, 
                            mods= ~taxonomic_group-1,
                            method="REML",
                            test="t",
@@ -2925,33 +2925,33 @@ mod.acute_taxa_het <-  rma.mv(yi=dARR,
                            struct="HCS", 
                            rho=0, 
                            R = list(phylogeny = phylo_matrix),
-                           data=d.acute,
+                           data=d.direct,
                            sparse=TRUE)
-AICc(mod.acute_taxa)
-AICc(mod.acute_taxa_het) 
+AICc(mod.direct_taxa)
+AICc(mod.direct_taxa_het) 
 
-summary(mod.acute_taxa_het)
-mod_results(mod.acute_taxa_het, mod="taxonomic_group",data=d.acute, group="species_ID") 
-r2_ml(mod.acute_taxa_het) 
+summary(mod.direct_taxa_het)
+mod_results(mod.direct_taxa_het, mod="taxonomic_group",data=d.direct, group="species_ID") 
+r2_ml(mod.direct_taxa_het) 
 
-my.orchard(mod.acute_taxa_het, mod="taxonomic_group", xlab="dARR", alpha=0.1, data=d.acute, group="species_ID", whisker=0.09) 
+my.orchard(mod.direct_taxa_het, mod="taxonomic_group", xlab="dARR", alpha=0.1, data=d.direct, group="species_ID", whisker=0.09) 
 ```
 
 ### Type of metric 
 
 #### Individual coefficients 
 ```{r, fig.height=10, fig.width=12}
-mod.acute_metric<-run.model(d.acute, ~metric-1)
-summary(mod.acute_metric)
-mod_results(mod.acute_metric, mod="metric",data=d.acute, group="species_ID") 
+mod.direct_metric<-run.model(d.direct, ~metric-1)
+summary(mod.direct_metric)
+mod_results(mod.direct_metric, mod="metric",data=d.direct, group="species_ID") 
 
-my.orchard(mod.acute_metric, xlab="dARR", mod="metric", alpha=0.1, data=d.acute, group="species_ID", whisker=0.07)
+my.orchard(mod.direct_metric, xlab="dARR", mod="metric", alpha=0.1, data=d.direct, group="species_ID", whisker=0.07)
 ```
 
 #### Heteroscedasticity check 
 
 ```{r, fig.height=6, fig.width=12}
-qplot(y = sqrt(residuals(mod.acute_metric)^2), x = fitted(mod.acute_metric)) + 
+qplot(y = sqrt(residuals(mod.direct_metric)^2), x = fitted(mod.direct_metric)) + 
       geom_point() +
       geom_smooth(method = "lm") + 
       geom_hline(yintercept = 0, colour="red") 
@@ -2960,8 +2960,8 @@ qplot(y = sqrt(residuals(mod.acute_metric)^2), x = fitted(mod.acute_metric)) +
 #### Individual coefficients (with heteroscedasticity)
 
 ```{r, fig.height=10, fig.width=12}
-mod.acute_metric_het <-  rma.mv(yi=dARR, 
-                           V=VCV_acute, 
+mod.direct_metric_het <-  rma.mv(yi=dARR, 
+                           V=VCV_direct, 
                            mods= ~metric-1,
                            method="REML",
                            test="t",
@@ -2972,16 +2972,16 @@ mod.acute_metric_het <-  rma.mv(yi=dARR,
                            struct="HCS", 
                            rho=0, 
                            R = list(phylogeny = phylo_matrix),
-                           data=d.acute,
+                           data=d.direct,
                            sparse=TRUE)
-AICc(mod.acute_metric)
-AICc(mod.acute_metric_het) 
+AICc(mod.direct_metric)
+AICc(mod.direct_metric_het) 
 
-summary(mod.acute_metric_het)
-mod_results(mod.acute_metric_het, mod="metric",data=d.acute, group="species_ID") 
-r2_ml(mod.acute_metric_het) 
+summary(mod.direct_metric_het)
+mod_results(mod.direct_metric_het, mod="metric",data=d.direct, group="species_ID") 
+r2_ml(mod.direct_metric_het) 
 
-my.orchard(mod.acute_metric_het, mod="metric", xlab="dARR", alpha=0.1, data=d.acute, group="species_ID", whisker=0.07) 
+my.orchard(mod.direct_metric_het, mod="metric", xlab="dARR", alpha=0.1, data=d.direct, group="species_ID", whisker=0.07) 
 ```
 
 
@@ -2990,26 +2990,26 @@ my.orchard(mod.acute_metric_het, mod="metric", xlab="dARR", alpha=0.1, data=d.ac
 #### Run model and plot results
 
 ```{r, fig.height=10, fig.width=12}
-mod.acute_ramping<-run.model(d.acute, ~scale(ramping, center=T, scale=F))
-summary(mod.acute_ramping)
+mod.direct_ramping<-run.model(d.direct, ~scale(ramping, center=T, scale=F))
+summary(mod.direct_ramping)
 
-d.acute_ramping<-filter(d, ramping!="NA"&brought_common_temp=="no")
-plot_continuous(d.acute_ramping, mod.acute_ramping, d.acute_ramping$ramping, "Heating rate (degrees/min)")
+d.direct_ramping<-filter(d, ramping!="NA"&brought_common_temp=="no")
+plot_continuous(d.direct_ramping, mod.direct_ramping, d.direct_ramping$ramping, "Heating rate (degrees/min)")
 ```
 
 ```{r, eval=F, include=F}
-save(mod.acute_habitat, 
-     mod.acute_habitat_het,
-     mod.adjusted_acute,
-     mod.acute_taxa, 
-     mod.acute_taxa_het,
-     mod.acute_metric, 
-     mod.acute_metric_het,
-     mod.acute_ramping, 
+save(mod.direct_habitat, 
+     mod.direct_habitat_het,
+     mod.adjusted_direct,
+     mod.direct_taxa, 
+     mod.direct_taxa_het,
+     mod.direct_metric, 
+     mod.direct_metric_het,
+     mod.direct_ramping, 
      
-     file=here("RData","Sens_acute_only.RData"))
+     file=here("RData","Sens_direct_only.RData"))
 
-load(here("Rdata", "Sens_acute_only.RData")) 
+load(here("Rdata", "Sens_direct_only.RData")) 
 ```
 
 ###
@@ -3345,14 +3345,14 @@ Note that each figure underwent cosmetic changes in Powerpoint.
 ## Figure 2 (Design representation)
 
 ```{r}
-d_acute<-data.frame(category=c("A", "B", "C"),
+d_direct<-data.frame(category=c("A", "B", "C"),
                   count=c(700, 20, 146))
-d_acute$fraction = d_acute$count / sum(d_acute$count)
-d_acute$ymax = cumsum(d_acute$fraction)
-d_acute$ymin = c(0, head(d_acute$ymax, n=-1))
+d_direct$fraction = d_direct$count / sum(d_direct$count)
+d_direct$ymax = cumsum(d_direct$fraction)
+d_direct$ymin = c(0, head(d_direct$ymax, n=-1))
 
 
-ggplot(d_acute, aes(ymax=ymax, ymin=ymin, xmax=4, xmin=2.5, fill=category)) +
+ggplot(d_direct, aes(ymax=ymax, ymin=ymin, xmax=4, xmin=2.5, fill=category)) +
      geom_rect(col="black") +
      coord_polar(theta="y") + # Try to remove that to understand how the chart is built initially
      xlim(c(1, 4))+theme_void()+scale_fill_manual(values=c("#7570B3", "#B370AC", "#CDCCE4"))+ 
@@ -3362,7 +3362,7 @@ ggplot(d_acute, aes(ymax=ymax, ymin=ymin, xmax=4, xmin=2.5, fill=category)) +
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         plot.background = element_rect(fill = "transparent", color = NA))
-ggsave("output/acute_effect_sizes.png", height=12, width=12, dpi=800, bg="transparent")
+ggsave("output/direct_effect_sizes.png", height=12, width=12, dpi=800, bg="transparent")
 
 
 
@@ -3393,37 +3393,37 @@ ggsave("output/persistent_effect_sizes.png", height=12, width=12, dpi=800, bg="t
 ```{r, fig.width=15, fig.height=15}
 
 design_dat<-d.tree %>% group_by(tip.label) %>% summarise( 
-                                               acute=brought_common_temp=="no", 
+                                               direct=brought_common_temp=="no", 
                                                persistent=brought_common_temp=="yes",
                                                CTmax=metric=="CTmax",
-                                               LT50=metric=="LT50") # Summarise, for each species, whether they tested acute effects, persistent effects, CTmax, or LT50
+                                               LT50=metric=="LT50") # Summarise, for each species, whether they tested direct effects, persistent effects, CTmax, or LT50
 
 design_dat<-distinct(design_dat) # Only keep unique rows
-design_dat$acute=as.numeric(design_dat$acute) # convert TRUE/FALSE to binary values
+design_dat$direct=as.numeric(design_dat$direct) # convert TRUE/FALSE to binary values
 design_dat$persistent=as.numeric(design_dat$persistent) # convert TRUE/FALSE to binary values
 design_dat$CTmax=as.numeric(design_dat$CTmax)  #convert TRUE/FALSE to binary values
 design_dat$LT50=as.numeric(design_dat$LT50) #convert TRUE/FALSE to binary values
 
-design_dat<-design_dat %>% group_by(tip.label) %>% summarise(acute=sum(acute),        
+design_dat<-design_dat %>% group_by(tip.label) %>% summarise(direct=sum(direct),        
                                                              persistent=sum(persistent),
                                                              CTmax=sum(CTmax),
                                                              LT50=sum(LT50))# calculate the sum for each species (i.e. if 1, the species has the given design or metric)   
 
 # In some cases, values were repeated, so need to replace "2" values by "1"
-design_dat$acute[design_dat$acute=="2"] <- "1" 
+design_dat$direct[design_dat$direct=="2"] <- "1" 
 design_dat$persistent[design_dat$persistent=="2"] <- "1"
 design_dat$CTmax[design_dat$CTmax=="2"] <- "1"
                                                                
-design_dat$acute=as.factor(design_dat$acute) # convert back to factor for the plot
+design_dat$direct=as.factor(design_dat$direct) # convert back to factor for the plot
 design_dat$persistent=as.factor(design_dat$persistent)
 design_dat$CTmax=as.factor(design_dat$CTmax)
 design_dat$LT50=as.factor(design_dat$LT50)
 
 
 design_dat <- mutate(design_dat, 
-                     acute_persistent = 
-                          ifelse(acute=="1"&persistent=="1", "both",
-                          ifelse(acute=="1"&persistent=="0", "acute", "persistent"))) # If both acute and persistent, indicate "both", if only acute, indicate "acute", otherwise indicate "persistent"
+                     direct_persistent = 
+                          ifelse(direct=="1"&persistent=="1", "both",
+                          ifelse(direct=="1"&persistent=="0", "direct", "persistent"))) # If both direct and persistent, indicate "both", if only direct, indicate "direct", otherwise indicate "persistent"
 
 design_dat<-mutate(design_dat, metric_type = 
                      ifelse(CTmax=="1"&LT50=="1", "both", 
@@ -3438,7 +3438,7 @@ p<-ggtree(tree_for_plot, layout="circular", lwd=0.75)
 p <- p %<+% d.tree_plot # link plot to data
 p2<- p+  geom_fruit(geom=geom_tile, mapping=aes(fill=metric_type), width=0.07, offset=0.085, col="black", size=0.3)+scale_fill_manual(values=c("gray70", "white","black"), name="Metric")+theme(legend.direction = "vertical")
 
-p3<- p2 + new_scale_fill()+ geom_fruit(geom=geom_tile, mapping=aes(fill=acute_persistent),offset=0.1,width=0.07, col="black", size=0.3)+scale_fill_manual(values=c("#9994EA","#EAD295","#95EA99"), name="Design")+theme(legend.direction = "vertical")
+p3<- p2 + new_scale_fill()+ geom_fruit(geom=geom_tile, mapping=aes(fill=direct_persistent),offset=0.1,width=0.07, col="black", size=0.3)+scale_fill_manual(values=c("#9994EA","#EAD295","#95EA99"), name="Design")+theme(legend.direction = "vertical")
 
 d.tree_plot$n_es=as.numeric(d.tree_plot$n_es)
 
