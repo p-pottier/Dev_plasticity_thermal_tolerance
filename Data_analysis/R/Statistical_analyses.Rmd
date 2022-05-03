@@ -63,7 +63,7 @@ pacman::p_load(tidyverse,
 ## Load data
 
 ```{r}
-d.raw<-read_csv("data/All_extracted_data_dev_ctmax.csv")
+d.raw<-read_csv("data/Raw_data.csv")
 
 # Reformat ID variables as characters
    d.raw$species_ID=as.character(d.raw$species_ID)
@@ -3335,6 +3335,69 @@ save(mod.morley,
 
 load(here("Rdata", "Morley_model.RData")) 
 
+```
+
+# **Post-hoc analyses**
+
+Here, we present analyses that were suggested during peer-review. Note that we did not have *a priori* hypotheses and predictions for those analyses. 
+
+## Body mass 
+
+### Full dataset
+```{r}
+d.mass<-filter(d, body_mass!="NA")
+mod.body_mass <- run.model(d.mass, ~ log(body_mass))
+summary(mod.body_mass) # 494 effect sizes
+
+plot_continuous(d.mass, mod.body_mass, log(d.mass$body_mass), "ln body mass (g)")
+```
+
+### Direct effects
+```{r}
+d.mass.direct<-filter(d.mass, brought_common_temp=="no")
+mod.body_mass.direct <- run.model(d.mass.direct, ~ log(body_mass))
+summary(mod.body_mass.direct) # 411 effect sizes
+
+plot_continuous(d.mass.direct, mod.body_mass.direct, log(d.mass.direct$body_mass), "ln body mass (g)")
+```
+
+### Persistent effects
+```{r}
+d.mass.persistent<-filter(d.mass, brought_common_temp=="yes")
+mod.body_mass.persistent <- run.model(d.mass.persistent, ~ log(body_mass))
+summary(mod.body_mass.persistent) # 83 effect sizes
+
+plot_continuous(d.mass.persistent, mod.body_mass.persistent, log(d.mass.persistent$body_mass), "ln body mass (g)")
+```
+
+## Age at sexual maturity
+
+
+### Full dataset
+```{r}
+d.maturity<-filter(d, age_maturity!="NA")
+mod.maturity<-run.model(d.maturity, ~ log(age_maturity)) 
+summary(mod.maturity) # 971 effect sizes
+
+plot_continuous(d.maturity, mod.maturity, log(d.maturity.noNA$age_maturity), "ln age at sexual maturity (years)")
+```
+
+### Direct effects
+```{r}
+d.maturity.direct<-filter(d.maturity, brought_common_temp=="no")
+mod.maturity.direct<-run.model(d.maturity.direct, ~log(age_maturity)) 
+summary(mod.maturity.direct) # 752 effect sizes
+
+plot_continuous(d.maturity.direct, mod.maturity.direct, log(d.maturity.direct$age_maturity), "ln age at sexual maturity (years)")
+```
+
+### Persistent effects
+```{r}
+d.maturity.persistent<-filter(d.maturity, brought_common_temp=="yes")
+mod.maturity.persistent<-run.model(d.maturity.persistent, ~log(age_maturity)) 
+summary(mod.maturity.persistent) # 219 effect sizes
+
+plot_continuous(d.maturity.persistent, mod.maturity.persistent, log(d.maturity.persistent$age_maturity), "ln age at sexual maturity (years)")
 ```
 
 
