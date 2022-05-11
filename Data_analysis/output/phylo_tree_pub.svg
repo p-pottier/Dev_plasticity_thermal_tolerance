@@ -1078,7 +1078,7 @@
 <rect x='958.74' y='760.82' width='19.93' height='19.93' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
 <rect x='959.17' y='761.25' width='19.07' height='19.07' style='stroke-width: 0.64; stroke-linecap: square; stroke-linejoin: miter; fill: #95EA99;' />
 <text x='985.64' y='735.23' style='font-size: 12.00px; font-family: Arial;' textLength='23.36px' lengthAdjust='spacingAndGlyphs'>both</text>
-<text x='985.64' y='755.16' style='font-size: 12.00px; font-family: Arial;' textLength='29.35px' lengthAdjust='spacingAndGlyphs'>direct</text>
+<text x='985.64' y='755.16' style='font-size: 12.00px; font-family: Arial;' textLength='27.34px' lengthAdjust='spacingAndGlyphs'>initial</text>
 <text x='985.64' y='775.08' style='font-size: 12.00px; font-family: Arial;' textLength='52.03px' lengthAdjust='spacingAndGlyphs'>persistent</text>
 </g>
 </svg>
