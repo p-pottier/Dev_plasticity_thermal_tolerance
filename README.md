@@ -2,7 +2,7 @@
 
 Cite as: **Pottier, P., Burke, S., Zhang, R.Y., Noble, D.W.A., Schwanz, L.E., Drobniak, S.M., & Nakagawa, S.  Developmental plasticity in thermal tolerance is insufficient to compensate for rising temperatures: a meta-analysis. Authorea.** [![DOI](https://zenodo.org/badge/DOI/10.22541/au.164573834.49438532/v1.svg)](http://doi.org/10.22541/au.164573834.49438532/v1)
 
-This repository contains bibliographic files, data and analysis code for this project.
+This repository contains bibliographic files, data and analysis code for this project. We recommend navigating the data and analyses with the knitted file available at: https://p-pottier.github.io/Dev_plasticity_thermal_tolerance/ 
 
 Below is a description of the different folders and their content. Please feel free to contact Patrice Pottier (p.pottier@unsw.edu.au) if you need assistance navigating these documents. We highly recommend contacting us if you are to re-use our data or analyses in future studies.
 
