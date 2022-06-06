@@ -218,6 +218,7 @@ mod.sakurai_HA<-glm(cbind(alive, dead) ~ temp, family=binomial, data=sakurai_HA)
 dose.p(mod.sakurai_HA, p=0.5)
 
 ```
+
 # Tsuchida and Setoguma 1997 
 
 We can convert survival at different temperatures to the temperature animals can tolerate for 1 hour according to Jorgensen et al. 2021 
@@ -232,15 +233,19 @@ static = data.frame(group=c("15C_acc", "15C_acc", "15C_acc", "15C_acc", "20C_acc
 
 mod.15C<-lm(log10(t_coma)~assay_temp, data=subset(static, group=="15C_acc"))
 chemCal::inverse.predict(mod.15C, log10(60))
+chemCal::inverse.predict(mod.15C, 0)
 
 mod.20C<-lm(log10(t_coma)~assay_temp, data=subset(static, group=="20C_acc"))
 chemCal::inverse.predict(mod.20C, log10(60))
+chemCal::inverse.predict(mod.20C, 0)
 
 mod.25C<-lm(log10(t_coma)~assay_temp, data=subset(static, group=="25C_acc"))
 chemCal::inverse.predict(mod.25C, log10(60))
+chemCal::inverse.predict(mod.25C, 0)
 
 mod.28C<-lm(log10(t_coma)~assay_temp, data=subset(static, group=="28C_acc"))
 chemCal::inverse.predict(mod.28C, log10(60))
+chemCal::inverse.predict(mod.28C, 0)
 ```
 
 # Wagner et al. 2001 
@@ -550,12 +555,15 @@ static = data.frame(group=c("8.4C_acc", "8.4C_acc", "8.4C_acc", "8.4C_acc", "16C
 
 mod.8.4C<-lm(log10(t_coma)~assay_temp, data=subset(static, group=="8.4C_acc"))
 chemCal::inverse.predict(mod.8.4C, log10(60))
+chemCal::inverse.predict(mod.8.4C, 0)
 
 mod.16C<-lm(log10(t_coma)~assay_temp, data=subset(static, group=="16C_acc"))
 chemCal::inverse.predict(mod.16C, log10(60))
+chemCal::inverse.predict(mod.16C, 0)
 
 mod.20C<-lm(log10(t_coma)~assay_temp, data=subset(static, group=="20C_acc"))
 chemCal::inverse.predict(mod.20C, log10(60))
+chemCal::inverse.predict(mod.20C, 0)
 
 ```
 
@@ -574,12 +582,15 @@ static.salar = data.frame(group=c("5C_acc", "5C_acc", "5C_acc", "5C_acc", "10C_a
 
 mod.5C.salar<-lm(log10(t_coma)~assay_temp, data=subset(static.salar, group=="5C_acc"))
 chemCal::inverse.predict(mod.5C.salar, log10(60))
+chemCal::inverse.predict(mod.5C.salar, 0)
 
 mod.10C.salar<-lm(log10(t_coma)~assay_temp, data=subset(static.salar, group=="10C_acc"))
 chemCal::inverse.predict(mod.10C.salar, log10(60))
+chemCal::inverse.predict(mod.10C.salar, 0)
 
 mod.20C.salar<-lm(log10(t_coma)~assay_temp, data=subset(static.salar, group=="20C_acc"))
 chemCal::inverse.predict(mod.20C.salar, log10(60))
+chemCal::inverse.predict(mod.20C.salar, 0)
 
 ## Data for the sea trout
 
@@ -589,12 +600,15 @@ static.sea = data.frame(group=c("5C_acc", "5C_acc", "5C_acc", "5C_acc", "10C_acc
 
 mod.5C.sea<-lm(log10(t_coma)~assay_temp, data=subset(static.sea, group=="5C_acc"))
 chemCal::inverse.predict(mod.5C.sea, log10(60))
+chemCal::inverse.predict(mod.5C.sea, 0)
 
 mod.10C.sea<-lm(log10(t_coma)~assay_temp, data=subset(static.sea, group=="10C_acc"))
 chemCal::inverse.predict(mod.10C.sea, log10(60))
+chemCal::inverse.predict(mod.10C.sea, 0)
 
 mod.20C.sea<-lm(log10(t_coma)~assay_temp, data=subset(static.sea, group=="20C_acc"))
 chemCal::inverse.predict(mod.20C.sea, log10(60))
+chemCal::inverse.predict(mod.20C.sea, 0)
 
 
 ## Data for the sea trout
@@ -605,18 +619,21 @@ static.brown = data.frame(group=c("5C_acc", "5C_acc", "5C_acc", "5C_acc", "10C_a
 
 mod.5C.brown<-lm(log10(t_coma)~assay_temp, data=subset(static.brown, group=="5C_acc"))
 chemCal::inverse.predict(mod.5C.brown, log10(60))
+chemCal::inverse.predict(mod.5C.brown, 0)
 
 mod.10C.brown<-lm(log10(t_coma)~assay_temp, data=subset(static.brown, group=="10C_acc"))
 chemCal::inverse.predict(mod.10C.brown, log10(60))
+chemCal::inverse.predict(mod.10C.brown, 0)
 
 mod.20C.brown<-lm(log10(t_coma)~assay_temp, data=subset(static.brown, group=="20C_acc"))
 chemCal::inverse.predict(mod.20C.brown, log10(60))
+chemCal::inverse.predict(mod.20C.brown, 0)
 
 ```
 
 
 
-# Bishai 1960
+# Ebel 1971   
 
 We can convert survival at different temperatures to the temperature animals can tolerate for 1 hour according to Jorgensen et al. 2018, 2021 and Rezende et al. 2014. 
 
@@ -652,29 +669,37 @@ static.coho = data.frame(group=c("5C_acc_NS", "5C_acc_NS", "5C_acc_NS", "5C_acc_
 
 mod.5C.coho.NS<-lm(log10(t_coma)~assay_temp, data=subset(static.coho, group=="5C_acc_NS"))
 chemCal::inverse.predict(mod.5C.coho.NS, log10(60))
+chemCal::inverse.predict(mod.5C.coho.NS, 0)
 
 mod.10C.coho.NS<-lm(log10(t_coma)~assay_temp, data=subset(static.coho, group=="10C_acc_NS"))
 chemCal::inverse.predict(mod.10C.coho.NS, log10(60))
+chemCal::inverse.predict(mod.10C.coho.NS, 0)
 
 mod.15C.coho.NS<-lm(log10(t_coma)~assay_temp, data=subset(static.coho, group=="15C_acc_NS"))
 chemCal::inverse.predict(mod.15C.coho.NS, log10(60))
+chemCal::inverse.predict(mod.15C.coho.NS, 0)
 
 mod.20C.coho.NS<-lm(log10(t_coma)~assay_temp, data=subset(static.coho, group=="20C_acc_NS"))
 chemCal::inverse.predict(mod.20C.coho.NS, log10(60))
+chemCal::inverse.predict(mod.20C.coho.NS, 0)
 
 # SS groups
 
 mod.5C.coho.SS<-lm(log10(t_coma)~assay_temp, data=subset(static.coho, group=="5C_acc_SS"))
 chemCal::inverse.predict(mod.5C.coho.SS, log10(60))
+chemCal::inverse.predict(mod.5C.coho.SS, 0)
 
 mod.10C.coho.SS<-lm(log10(t_coma)~assay_temp, data=subset(static.coho, group=="10C_acc_SS"))
 chemCal::inverse.predict(mod.10C.coho.SS, log10(60))
+chemCal::inverse.predict(mod.10C.coho.SS, 0)
 
 mod.15C.coho.SS<-lm(log10(t_coma)~assay_temp, data=subset(static.coho, group=="15C_acc_SS"))
 chemCal::inverse.predict(mod.15C.coho.SS, log10(60))
+chemCal::inverse.predict(mod.15C.coho.SS, 0)
 
 mod.20C.coho.SS<-lm(log10(t_coma)~assay_temp, data=subset(static.coho, group=="20C_acc_SS"))
 chemCal::inverse.predict(mod.20C.coho.SS, log10(60))
+chemCal::inverse.predict(mod.20C.coho.SS, 0)
 
 
 ## Data for chinook salmon
@@ -698,17 +723,21 @@ static.chinook = data.frame(group=c(
 
 mod.15C.chinook.NS<-lm(log10(t_coma)~assay_temp, data=subset(static.chinook, group=="15C_acc_NS"))
 chemCal::inverse.predict(mod.15C.chinook.NS, log10(60))
+chemCal::inverse.predict(mod.15C.chinook.NS, 0)
 
 mod.20C.chinook.NS<-lm(log10(t_coma)~assay_temp, data=subset(static.chinook, group=="20C_acc_NS"))
 chemCal::inverse.predict(mod.20C.chinook.NS, log10(60))
+chemCal::inverse.predict(mod.20C.chinook.NS, 0)
 
 # SS groups
 
 mod.15C.chinook.SS<-lm(log10(t_coma)~assay_temp, data=subset(static.chinook, group=="15C_acc_SS"))
 chemCal::inverse.predict(mod.15C.chinook.SS, log10(60))
+chemCal::inverse.predict(mod.15C.chinook.SS, 0)
 
 mod.20C.chinook.SS<-lm(log10(t_coma)~assay_temp, data=subset(static.chinook, group=="20C_acc_SS"))
 chemCal::inverse.predict(mod.20C.chinook.SS, log10(60))
+chemCal::inverse.predict(mod.20C.chinook.SS, 0)
 
 
 
@@ -733,18 +762,22 @@ static.steel = data.frame(group=c(
 
 mod.10C.steel.NS<-lm(log10(t_coma)~assay_temp, data=subset(static.steel, group=="10C_acc_NS"))
 chemCal::inverse.predict(mod.10C.steel.NS, log10(60))
+chemCal::inverse.predict(mod.10C.steel.NS, 0)
 
 mod.15C.steel.NS<-lm(log10(t_coma)~assay_temp, data=subset(static.steel, group=="15C_acc_NS"))
 chemCal::inverse.predict(mod.15C.steel.NS, log10(60))
+chemCal::inverse.predict(mod.15C.steel.NS, 0)
 
 
 # SS groups
 
 mod.10C.steel.SS<-lm(log10(t_coma)~assay_temp, data=subset(static.steel, group=="10C_acc_SS"))
 chemCal::inverse.predict(mod.10C.steel.SS, log10(60))
+chemCal::inverse.predict(mod.10C.steel.SS, 0)
 
 mod.15C.steel.SS<-lm(log10(t_coma)~assay_temp, data=subset(static.steel, group=="15C_acc_SS"))
 chemCal::inverse.predict(mod.15C.steel.SS, log10(60))
+chemCal::inverse.predict(mod.15C.steel.SS, 0)
 
 
 ```
@@ -761,10 +794,12 @@ static=read_csv("datasets/McCauley_1963.csv")
 # Animals acclimated to 15C
 mod.15C<-lm(log10(t_coma)~assay_temp, data=subset(static, group=="15_acc"))
 chemCal::inverse.predict(mod.15C, log10(60))
+chemCal::inverse.predict(mod.15C, 0)
 
 # Animals acclimated to 20C
 mod.20C<-lm(log10(t_coma)~assay_temp, data=subset(static, group=="20_acc"))
 chemCal::inverse.predict(mod.20C, log10(60))
+chemCal::inverse.predict(mod.20C, 0)
 ```
 
 
