@@ -1,16 +1,16 @@
 ---
-title: "Developmental plasticity in thermal tolerance is insufficient to compensate for rising temperatures: a meta-analysis"
+title: "Developmental plasticity in thermal tolerance: ontogenetic variation, persistence and future directions"
 author: Patrice Pottier, Samantha Burke, Rose Y. Zhang, Daniel W.A. Noble,
   Lisa E. Schwanz, Szymon M. Drobniak, Shinichi Nakagawa
 subtitle: Supporting Information S2
 date: "latest update: `r format(Sys.time(), '%d %B %Y')`"
 output: 
   rmdformats::readthedown:
-    code_folding: hide
+    code_folding: show
     code_download: true
     toc_depth: 4
 editor_options: 
-  chunk_output_type: inline
+  chunk_output_type: console
 ---
 
 
@@ -32,6 +32,7 @@ knitr::opts_chunk$set(
 ## Load packages
 
 ```{r}
+groundhog::groundhog.library("emmeans", "2022-01-01")
 pacman::p_load(tidyverse,
                kableExtra,
                DataExplorer,
@@ -49,14 +50,15 @@ pacman::p_load(tidyverse,
                ggnewscale, 
                RColorBrewer,
                metafor,
-               metaAidR,
+               metaAidR, # devtools::install_github("daniel1noble/metaAidR")
                orchaRd, # devtools::install_github("daniel1noble/orchaRd")
                ggdist,
                ggstatsplot,
                here,
                ggExtra, 
-               emmeans,# remotes::install_github("rvlenth/emmeans")
-               MuMIn) 
+               #emmeans,# remotes::install_github("rvlenth/emmeans")
+               MuMIn,
+               groundhog) 
 
 ```
 
@@ -918,7 +920,7 @@ p<-ggtree(tree_for_plot, layout="circular", lwd=0.75) # Circular tree
 p <- p %<+% d.tree_plot # link plot to data
 p2<- p+  geom_fruit(geom=geom_tile, mapping=aes(fill=metrics), width=0.07, offset=0.085, col="gray30")+scale_fill_manual(values=c("gray70", "white","black")) # Create tiles to indicate which metric was used for this species
 
-p3<- p2 + new_scale_fill()+ geom_fruit(geom=geom_tile, mapping=aes(fill=persistence),offset=0.1,width=0.07, col="gray30")+scale_fill_manual(values=c("#7570B3","#D95F02","#1B9E77")) # Create tiles to indicate whether initial or persistent effects were assessed
+p3<- p2 + new_scale_fill()+ geom_fruit(geom=geom_tile, mapping=aes(fill=persistence),offset=0.1,width=0.07, col="gray30")+scale_fill_manual(values=c("#D95F02","#7570B3","#1B9E77")) # Create tiles to indicate whether initial or persistent effects were assessed
 
 d.tree_plot$n_es=as.numeric(d.tree_plot$n_es) # Convert to numeric 
 
@@ -1158,9 +1160,7 @@ return(mod)
 my.orchard<- function (object, mod = "1", group, data, xlab, N = "none", 
     alpha = 0.5, angle = 90, cb = FALSE, k = TRUE, g = TRUE, 
     trunk.size = 7, branch.size = 2, twig.size = 0.8, whisker, transfm = c("none", # increased point size, branch size, and added a whisker argument
-        "tanh"), condition.lab = "Condition", legend.pos = c("bottom.right", 
-        "bottom.left", "top.right", "top.left", 
-        "top.out", "bottom.out"), k.pos = c("right", 
+        "tanh"), condition.lab = "Condition", legend.pos = "bottom.right", k.pos = c("right", 
         "left")) 
 {
     transfm <- match.arg(transfm)
@@ -1315,6 +1315,8 @@ my.orchard<- function (object, mod = "1", group, data, xlab, N = "none",
 ```
 
 
+
+
 ## Plot continuous moderator 
 
 ```{r}
@@ -1349,165 +1351,6 @@ plot<-ggplot(data=data, aes(x = moderator, y = dARR)) + # Plot the results
 return(plot)
 }
 
-```
-
-```{r}
-my.orchard<- function (object, mod = "1", group, data, xlab, N = "none", 
-    alpha = 0.5, angle = 90, cb = FALSE, k = TRUE, g = TRUE, 
-    trunk.size = 7, branch.size = 2, twig.size = 0.8, whisker, transfm = c("none", # increased point size, branch size, and added a whisker argument
-        "tanh"), condition.lab = "Condition", legend.pos = c("bottom.right", 
-        "bottom.left", "top.right", "top.left", 
-        "top.out", "bottom.out"), k.pos = c("right", 
-        "left")) 
-{
-    transfm <- match.arg(transfm)
-    if (any(class(object) %in% c("rma.mv", "rma"))) {
-        if (mod != "1") {
-            results <- orchaRd::mod_results(object, mod, group, 
-                data)
-        }
-        else {
-            results <- orchaRd::mod_results(object, mod = "1", 
-                group, data)
-        }
-    }
-    if (any(class(object) %in% c("orchard"))) {
-        results <- object
-    }
-    mod_table <- results$mod_table
-    data <- results$data
-    data$moderator <- factor(data$moderator, levels = mod_table$name, 
-        labels = mod_table$name)
-    data$scale <- (1/sqrt(data[, "vi"]))
-    legend <- "Precision (1/SE)"
-    if (any(N != "none")) {
-        data$scale <- N
-        legend <- "Sample Size (N)"
-    }
-    if (transfm == "tanh") {
-        cols <- sapply(mod_table, is.numeric)
-        mod_table[, cols] <- Zr_to_r(mod_table[, cols])
-        data$yi <- Zr_to_r(data$yi)
-        label <- xlab
-    }
-    else {
-        label <- xlab
-    }
-    mod_table$K <- as.vector(by(data, data[, "moderator"], 
-        function(x) length(x[, "yi"])))
-    mod_table$g <- as.vector(num_studies(data, moderator, stdy)[, 
-        2])
-    group_no <- length(unique(mod_table[, "name"]))
-    cbpl <- c("#88CCEE", "#CC6677", "#DDCC77", 
-        "#117733", "#332288", "#AA4499", "#44AA99", 
-        "#999933", "#882255", "#661100", "#6699CC", 
-        "#888888", "#E69F00", "#56B4E9", "#009E73", 
-        "#F0E442", "#0072B2", "#D55E00", "#CC79A7", 
-        "#999999")
-    if (names(mod_table)[2] == "condition") {
-        condition_no <- length(unique(mod_table[, "condition"]))
-        plot <- ggplot2::ggplot() + ggbeeswarm::geom_quasirandom(data = data, 
-            ggplot2::aes(y = yi, x = moderator, size = scale, 
-                colour = moderator), alpha = alpha) + ggplot2::geom_hline(yintercept = 0, 
-            linetype = 2, colour = "black", alpha = alpha) + 
-            ggplot2::geom_linerange(data = mod_table, ggplot2::aes(x = name, 
-                ymin = lowerCL, ymax = upperCL), size = branch.size, 
-                position = ggplot2::position_dodge2(width = 0.3)) + 
-            ggplot2::geom_pointrange(data = mod_table, ggplot2::aes(y = estimate, 
-                x = name, ymin = lowerPR, ymax = upperPR, shape = as.factor(condition), 
-                fill = name), size = twig.size, position = ggplot2::position_dodge2(width = 0.3), 
-                fatten = trunk.size) + ggplot2::scale_shape_manual(values = 20 + 
-            (1:condition_no)) + ggplot2::coord_flip() + ggplot2::theme_bw() + 
-            ggplot2::guides(fill = "none", colour = "none") + 
-            ggplot2::theme(legend.position = c(0, 1), legend.justification = c(0, 
-                1)) + ggplot2::theme(legend.title = ggplot2::element_text(size = 9)) + 
-            ggplot2::theme(legend.direction = "horizontal") + 
-            ggplot2::theme(legend.background = ggplot2::element_blank()) + 
-            ggplot2::labs(y = label, x = "", size = legend) + 
-            ggplot2::labs(shape = condition.lab) + ggplot2::theme(axis.text.y = ggplot2::element_text(size = 10, 
-            colour = "black", hjust = 0.5, angle = angle))
-    }
-    else {
-        plot <- ggplot2::ggplot() + ggbeeswarm::geom_quasirandom(data = data, 
-            ggplot2::aes(y = yi, x = moderator, size = scale, 
-                fill = moderator), alpha = alpha, width=0.4, pch=21, stroke=1.1, col="black") + # Change point shape (21, with black borders)
-            ggplot2::geom_hline(yintercept = 0, 
-            linetype = 2, colour = "black", alpha = 0.3, lwd=1.3) + # Change thickness 0 line
-            ggplot2::geom_errorbar(data = mod_table, ggplot2::aes(x = name, 
-                ymin = lowerCL, ymax = upperCL), size = branch.size, width= whisker) + # Added variable whisker size
-            ggplot2::geom_pointrange(data = mod_table, ggplot2::aes(y = estimate, 
-                x = name, ymin = lowerPR, ymax = upperPR, fill = name), 
-                size = twig.size, fatten = trunk.size, shape = 23, stroke=2.2) + # Change point shape
-            scale_size_continuous(range = c(1, 14))+ # change point scaling
-            ggplot2::coord_flip() + 
-            ggplot2::theme_bw() + 
-            ggplot2::guides(fill = "none", colour = "none") + 
-            ggplot2::theme(text=element_text(size=24, colour="black"))+ # Change font size
-            ggplot2::theme(legend.title = ggplot2::element_text(size = 15)) + # Increased font legend title
-            ggplot2::theme(legend.text = ggplot2::element_text(size = 13)) +
-            ggplot2::theme(legend.direction = "horizontal") + 
-            ggplot2::theme(legend.background = ggplot2::element_blank()) + 
-            ggplot2::labs(y = label, x = "", size = legend) + 
-            ggplot2::theme(axis.text.y = ggplot2::element_text(size = 18, 
-                colour = "black", hjust = 0.5, angle = angle)) + # Increased size title axis label
-            ggplot2::theme(axis.text.x = ggplot2::element_text(size = 18)) + # Increase size axis ticks
-            ggplot2::theme(panel.border = element_rect(colour = "black", fill=NA, size=1.3))
-            
-    }
-    if (legend.pos == "bottom.right") {
-        plot <- plot + ggplot2::theme(legend.position = c(1, 
-            0), legend.justification = c(1, 0))
-    }
-    else if (legend.pos == "bottom.left") {
-        plot <- plot + ggplot2::theme(legend.position = c(0, 
-            0), legend.justification = c(0, 0))
-    }
-    else if (legend.pos == "top.right") {
-        plot <- plot + ggplot2::theme(legend.position = c(1, 
-            1), legend.justification = c(1, 1))
-    }
-    else if (legend.pos == "top.left") {
-        plot <- plot + ggplot2::theme(legend.position = c(0, 
-            1), legend.justification = c(0, 1))
-    }
-    else if (legend.pos == "top.out") {
-        plot <- plot + ggplot2::theme(legend.position = "top")
-    }
-    else if (legend.pos == "bottom.out") {
-        plot <- plot + ggplot2::theme(legend.position = "bottom")
-    }
-    if (cb == TRUE) {
-        plot <- plot + ggplot2::scale_fill_manual(values = cbpl) + 
-            ggplot2::scale_colour_manual(values = cbpl)
-    }
-    if (k == TRUE && g == FALSE && k.pos == "right") {
-        plot <- plot + ggplot2::annotate("text", y = (max(data$yi) + 
-            (max(data$yi) * 0.1)), x = (seq(1, group_no, 1) + 
-            0.3), label = paste("italic(k)==", mod_table$K[1:group_no]), # Size changed to 5.5
-            parse = TRUE, hjust = "right", size = 5.5)
-    }
-    else if (k == TRUE && g == FALSE && k.pos == "left") {
-        plot <- plot + ggplot2::annotate("text", y = (min(data$yi) + 
-            (min(data$yi) * 0.1)), x = (seq(1, group_no, 1) + 
-            0.3), label = paste("italic(k)==", mod_table$K[1:group_no]), 
-            parse = TRUE, hjust = "left", size = 5.5) # Size changed to 5.5
-    }
-    else if (k == TRUE && g == TRUE && k.pos == "right") {
-        plot <- plot + ggplot2::annotate("text", y = (max(data$yi) + 
-            (max(data$yi) * 0.1)), x = (seq(1, group_no, 1) + 
-            0.3), label = paste("italic(k)==", mod_table$K[1:group_no], 
-            " (", mod_table$g[1:group_no], ")"), 
-            parse = TRUE, hjust = "right", size = 5.5) # Size changed to 5.5
-    }
-    else if (k == TRUE && g == TRUE && k.pos == "left") {
-        plot <- plot + ggplot2::annotate("text", y = (min(data$yi) + 
-            (min(data$yi) * 0.1)), x = (seq(1, group_no, 1) + 
-            0.3), label = paste("italic(k)==", mod_table$K[1:group_no], 
-            " (", mod_table$g[1:group_no], ")"), 
-            parse = TRUE, hjust = "left", size = 5.5) # Size changed to 5.5
-    }
-    return(plot)
-}
 ```
 
 
@@ -2072,14 +1915,21 @@ summary(mod.design_het_cont_F_ref)
 
 ### Run model and plot results
 
+We log transformed this variable because it was heavily right-skewed. 
+
 ```{r, fig.width=12, fig.height=8}
 mod.common_temp<- run.model(d, ~scale(time_common_temp, center=T, scale=F)) # Center to zero mean
 summary(mod.common_temp)
-
 r2_ml(mod.common_temp)
 
+
+mod.common_temp_log<- run.model(d, ~scale(log(time_common_temp), center=T, scale=F)) # Center to zero meanand logged
+summary(mod.common_temp_log)
+r2_ml(mod.common_temp_log)
+
+
 d.common_temp<-filter(d, time_common_temp!="NA")
-plot_continuous(d.common_temp, mod.common_temp, d.common_temp$time_common_temp, "Time at common temperature (days)")
+plot_continuous(d.common_temp, mod.common_temp_log, d.common_temp$time_common_temp, "Time at common temperature (days)")
 ```
 
 ### Heteroscedasticity check 
@@ -3353,7 +3203,7 @@ summary(mod.body_mass) # 494 effect sizes
 plot_continuous(d.mass, mod.body_mass, log(d.mass$body_mass), "ln body mass (g)")
 ```
 
-### initial effects
+### Initial effects
 ```{r}
 d.mass.initial<-filter(d.mass, brought_common_temp=="no")
 mod.body_mass.initial <- run.model(d.mass.initial, ~ log(body_mass))
@@ -3383,7 +3233,7 @@ summary(mod.maturity) # 971 effect sizes
 plot_continuous(d.maturity, mod.maturity, log(d.maturity$age_maturity), "ln age at sexual maturity (years)")
 ```
 
-### initial effects
+### Initial effects
 ```{r}
 d.maturity.initial<-filter(d.maturity, brought_common_temp=="no")
 mod.maturity.initial<-run.model(d.maturity.initial, ~log(age_maturity)) 
@@ -3400,6 +3250,153 @@ summary(mod.maturity.persistent) # 219 effect sizes
 
 plot_continuous(d.maturity.persistent, mod.maturity.persistent, log(d.maturity.persistent$age_maturity), "ln age at sexual maturity (years)")
 ```
+
+## Time in a common garden condition
+
+### Accounting for differences in life span
+
+Here, the age at sexual maturity was used as a proxy for lifespan
+
+```{r, fig.width=12, fig.height=8}
+d<-d %>% mutate(ratio_reacc_maturity = (time_common_temp / (age_maturity*365.25)))
+
+mod.common_temp_maturity<- run.model(d, ~scale(log(ratio_reacc_maturity), center=T, scale=F)) # Center to zero mean
+summary(mod.common_temp_maturity)
+
+r2_ml(mod.common_temp_maturity)
+
+d.reacc.maturity<-filter(d, ratio_reacc_maturity!="NA")
+
+plot_continuous(d.reacc.maturity, mod.common_temp_maturity, d.reacc.maturity$ratio_reacc_maturity, "Re-acclimation time / Age at sexual maturity")
+```
+
+### Life history variation after accounting for different re-acclimation times 
+
+```{r, fig.width=12, fig.height=8}
+mod.common_temp_design <- run.model(d, ~scale(log(time_common_temp), center=T, scale=F)+exp_design)
+summary(mod.common_temp_design)
+
+mod.common_temp_maturity_design <- run.model(d, ~scale(log(ratio_reacc_maturity), center=T, scale=F)+exp_design)
+summary(mod.common_temp_maturity_design)
+
+```
+
+## Interactions
+
+### Full dataset
+
+#### Latitude x Body mass
+```{r}
+mod.lat_mass<- run.model(d, ~scale(log(body_mass))*
+                             scale(abs(latitude)))
+summary(mod.lat_mass)
+```
+
+#### Latitude x Heating rate
+```{r}
+mod.lat_ramp<- run.model(d, ~scale(abs(latitude))*
+                             scale(log(ramping)))
+summary(mod.lat_ramp)
+```
+
+
+#### Body mass x Heating rate
+```{r}
+mod.mass_ramp<- run.model(d, ~scale(log(body_mass))*
+                              scale(log(ramping)))
+summary(mod.mass_ramp)
+```
+
+
+#### Latitude x Body mass x Heating rate
+```{r}
+mod.lat_mass_ramp<- run.model(d, ~scale(log(body_mass))*
+                                  scale(log(ramping))*
+                                  scale(abs(latitude)))
+summary(mod.lat_mass_ramp)
+```
+
+
+### Initial effects
+
+#### Latitude x Body mass
+```{r}
+mod.lat_mass_initial<- run.model(d.initial, ~scale(log(body_mass))*
+                                            scale(abs(latitude)))
+summary(mod.lat_mass_initial)
+```
+
+#### Latitude x Heating rate
+```{r}
+mod.lat_ramp_initial<- run.model(d.initial, ~scale(abs(latitude))*
+                                            scale(log(ramping)))
+summary(mod.lat_ramp_initial)
+```
+
+
+#### Body mass x Heating rate
+```{r}
+mod.mass_ramp_initial<- run.model(d.initial, ~scale(log(body_mass))*
+                                              scale(log(ramping)))
+summary(mod.mass_ramp_initial)
+```
+
+
+#### Latitude x Body mass x Heating rate
+```{r}
+mod.lat_mass_ramp_initial<- run.model(d.initial, ~scale(log(body_mass))*
+                                                  scale(log(ramping))*
+                                                  scale(abs(latitude)))
+summary(mod.lat_mass_ramp_initial)
+```
+
+### Persistent effects
+
+#### Latitude x Body mass
+```{r}
+mod.lat_mass_persistent<- run.model(d.persistent, ~scale(log(body_mass))*
+                                                  scale(abs(latitude)))
+summary(mod.lat_mass_persistent)
+```
+
+#### Latitude x Heating rate
+```{r}
+mod.lat_ramp_persistent<- run.model(d.persistent, ~scale(abs(latitude))*
+                                                   scale(log(ramping)))
+summary(mod.lat_ramp_persistent)
+```
+
+
+#### Body mass x Heating rate
+```{r}
+mod.mass_ramp_persistent<- run.model(d.persistent, ~scale(log(body_mass))*
+                                                    scale(log(ramping)))
+summary(mod.mass_ramp_persistent)
+```
+
+
+#### Latitude x Body mass x Heating rate
+
+This model failed to converge due to sample size limitations
+```{r, eval=F}
+mod.lat_mass_ramp_persistent<- run.model(d.persistent,~scale(log(body_mass))*
+                                                       scale(log(ramping))*
+                                                       scale(abs(latitude)))
+summary(mod.lat_mass_ramp_persistent)
+```
+
+## Exclude temperature tolerated for one hour
+
+```{r}
+d.crit<-d %>% mutate(d, Tolerance_landscape=ifelse(major_concerns=="The CTmax was estimated from death times at different temperatures (thermal tolerance landscapes)."|major_concerns=="The CTmax was estimated from death times at different temperatures (thermal tolerance landscapes).\\", "yes", "no"))
+d.crit<- filter(d.crit, Tolerance_landscape!="yes"|is.na(Tolerance_landscape)=="TRUE")                    
+mod.tcrit<- run.model(d.crit, ~1)
+summary(mod.tcrit)
+
+mod_results(mod.tcrit, mod="1", data=d.crit, group="species_ID") # For prediction intervals
+```
+
+
 
 ```{r, include=F, eval=F}
 save(mod.body_mass,
