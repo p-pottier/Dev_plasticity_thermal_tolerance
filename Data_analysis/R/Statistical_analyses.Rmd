@@ -3065,7 +3065,7 @@ summary(mod.imputed)
 mod_results(mod.imputed, mod="1",data=filter(d, imputed=="no"), group="species_ID") 
 
 
-my.orchard(mod.imputed, xlab="dARR", mod="1", alpha=0.1, data=d, group="species_ID", whisker=0.07)
+my.orchard(mod.imputed, xlab="dARR", mod="1", alpha=0.1, data=filter(d, imputed=="no"), group="species_ID", whisker=0.07)
 ```
 
 ### Analysis without concerning data 
@@ -3075,7 +3075,7 @@ mod.concern<-run.model(filter(d, is_concern=="no"), ~1)
 summary(mod.concern)
 mod_results(mod.concern, mod="1",data=filter(d, is_concern=="no"), group="species_ID") 
 
-my.orchard(mod.concern, xlab="dARR", mod="1", alpha=0.1, data=d, group="species_ID", whisker=0.07)
+my.orchard(mod.concern, xlab="dARR", mod="1", alpha=0.1, data=filter(d, is_concern=="no"), group="species_ID", whisker=0.07)
 ```
 
 ### Analyses without extreme values of dARR
@@ -3096,21 +3096,21 @@ summary(mod.extreme1.25)
 mod_results(mod.extreme1.25, mod="1",data=filter(d, dARR>-1.25&dARR<1.25), group="species_ID") 
 
 
-my.orchard(mod.extreme1.25, xlab="dARR", mod="1", alpha=0.1, data=d, group="species_ID", whisker=0.05)
+my.orchard(mod.extreme1.25, xlab="dARR", mod="1", alpha=0.1, data=filter(d, dARR>-1.25&dARR<1.25), group="species_ID", whisker=0.05)
 
 ##  Removing values under -0.5
 mod.extreme0.5<-run.model(filter(d, dARR>-0.5), ~1) # Removed 34 effect sizes
 summary(mod.extreme0.5)
 mod_results(mod.extreme0.5, mod="1",data=filter(d, dARR>-0.5), group="species_ID") 
 
-my.orchard(mod.extreme0.5, xlab="dARR", mod="1", alpha=0.1, data=d, group="species_ID", whisker=0.05)
+my.orchard(mod.extreme0.5, xlab="dARR", mod="1", alpha=0.1, data=filter(d, dARR>-0.5), group="species_ID", whisker=0.05)
 
 ## Removing values under -0.15 (as in Gunderson & Stillman 2015)
 mod.extreme0.15<-run.model(filter(d, dARR>-0.15), ~1) # Removed 97 effect sizes
 summary(mod.extreme0.15)
 mod_results(mod.extreme0.15, mod="1",data=filter(d, dARR>-0.15), group="species_ID") 
 
-my.orchard(mod.extreme0.15, xlab="dARR", mod="1", alpha=0.1, data=d, group="species_ID", whisker=0.05)
+my.orchard(mod.extreme0.15, xlab="dARR", mod="1", alpha=0.1, data=filter(d, dARR>-0.15), group="species_ID", whisker=0.05)
 
 ## Quantifying negative dARR values as 0 (as in Morley et al. 2019)
 d <- d %>%  mutate(morley_dARR=ifelse(dARR<0, 0, dARR)) # Convert negative values to 0 
