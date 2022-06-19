@@ -3299,6 +3299,12 @@ mod.lat_ramp<- run.model(d, ~scale(abs(latitude))*
 summary(mod.lat_ramp)
 ```
 
+#### Latitude x Acclimation duration
+```{r}
+mod.lat_time<- run.model(d, ~scale(abs(latitude))*
+                             scale(log(acc_duration)))
+summary(mod.lat_time)
+```
 
 #### Body mass x Heating rate
 ```{r}
@@ -3307,6 +3313,19 @@ mod.mass_ramp<- run.model(d, ~scale(log(body_mass))*
 summary(mod.mass_ramp)
 ```
 
+#### Body mass x Acclimation duration
+```{r}
+mod.mass_time<- run.model(d, ~scale(log(body_mass))*
+                              scale(log(acc_duration)))
+summary(mod.mass_time)
+```
+
+#### Heating rate x Acclimation duration
+```{r}
+mod.ramp_time<- run.model(d, ~scale(log(ramping))*
+                              scale(log(acc_duration)))
+summary(mod.ramp_time)
+```
 
 #### Latitude x Body mass x Heating rate
 ```{r}
@@ -3314,6 +3333,58 @@ mod.lat_mass_ramp<- run.model(d, ~scale(log(body_mass))*
                                   scale(log(ramping))*
                                   scale(abs(latitude)))
 summary(mod.lat_mass_ramp)
+```
+
+#### Latitude x Body mass x Acclimation duration
+```{r}
+mod.lat_mass_time<- run.model(d, ~scale(log(body_mass))*
+                                  scale(log(acc_duration))*
+                                  scale(abs(latitude)))
+summary(mod.lat_mass_time)
+```
+
+
+#### Latitude x Heating rate x Acclimation duration
+```{r}
+mod.lat_ramp_time<- run.model(d, ~scale(log(acc_duration))*
+                                  scale(log(ramping))*
+                                  scale(abs(latitude)))
+summary(mod.lat_ramp_time)
+```
+
+#### Body size x Heating rate x Acclimation duration
+```{r}
+mod.mass_ramp_time<- run.model(d, ~scale(log(body_mass))*
+                                  scale(log(ramping))*
+                                  scale(log(acc_duration)))
+summary(mod.mass_ramp_time)
+```
+
+#### Habitat variation after accounting for methodological and body mass variation 
+```{r}
+mod.mass_ramp_time_habitat<- run.model(d, ~scale(log(body_mass))*
+                                  scale(log(ramping))*
+                                  scale(log(acc_duration))+habitat-1)
+
+summary(mod.mass_ramp_time_habitat)
+```
+
+#### Taxonomic variation after accounting for methodological and body mass variation 
+```{r}
+mod.mass_ramp_time_taxa<- run.model(d, ~scale(log(body_mass))*
+                                  scale(log(ramping))*
+                                  scale(log(acc_duration))+taxonomic_group-1)
+
+summary(mod.mass_ramp_time_taxa)
+```
+
+#### Life history variation after accounting for methodological and body mass variation 
+```{r}
+mod.mass_ramp_time_design<- run.model(d, ~scale(log(body_mass))*
+                                  scale(log(ramping))*
+                                  scale(log(acc_duration))+exp_design-1)
+
+summary(mod.mass_ramp_time_design)
 ```
 
 
@@ -3333,6 +3404,12 @@ mod.lat_ramp_initial<- run.model(d.initial, ~scale(abs(latitude))*
 summary(mod.lat_ramp_initial)
 ```
 
+#### Latitude x Acclimation duration
+```{r}
+mod.lat_time_initial<- run.model(d.initial, ~scale(abs(latitude))*
+                                             scale(log(acc_duration)))
+summary(mod.lat_time_initial)
+```
 
 #### Body mass x Heating rate
 ```{r}
@@ -3341,6 +3418,19 @@ mod.mass_ramp_initial<- run.model(d.initial, ~scale(log(body_mass))*
 summary(mod.mass_ramp_initial)
 ```
 
+#### Body mass x Acclimation duration
+```{r}
+mod.mass_time_initial<- run.model(d.initial, ~scale(log(body_mass))*
+                              scale(log(acc_duration)))
+summary(mod.mass_time_initial)
+```
+
+#### Heating rate x Acclimation duration
+```{r}
+mod.ramp_time_initial<- run.model(d.initial, ~scale(log(ramping))*
+                              scale(log(acc_duration)))
+summary(mod.ramp_time_initial)
+```
 
 #### Latitude x Body mass x Heating rate
 ```{r}
@@ -3349,6 +3439,32 @@ mod.lat_mass_ramp_initial<- run.model(d.initial, ~scale(log(body_mass))*
                                                   scale(abs(latitude)))
 summary(mod.lat_mass_ramp_initial)
 ```
+
+#### Latitude x Body mass x Acclimation duration
+```{r}
+mod.lat_mass_time_initial<- run.model(d.initial, ~scale(log(body_mass))*
+                                  scale(log(acc_duration))*
+                                  scale(abs(latitude)))
+summary(mod.lat_mass_time_initial)
+```
+
+
+#### Latitude x Heating rate x Acclimation duration
+```{r}
+mod.lat_ramp_time_initial<- run.model(d.initial, ~scale(log(acc_duration))*
+                                  scale(log(ramping))*
+                                  scale(abs(latitude)))
+summary(mod.lat_ramp_time_initial)
+```
+
+#### Body size x Heating rate x Acclimation duration
+```{r}
+mod.mass_ramp_time_initial<- run.model(d.initial, ~scale(log(body_mass))*
+                                  scale(log(ramping))*
+                                  scale(log(acc_duration)))
+summary(mod.mass_ramp_time_initial)
+```
+
 
 ### Persistent effects
 
@@ -3366,6 +3482,13 @@ mod.lat_ramp_persistent<- run.model(d.persistent, ~scale(abs(latitude))*
 summary(mod.lat_ramp_persistent)
 ```
 
+#### Latitude x Acclimation duration
+```{r}
+mod.lat_time_persistent<- run.model(d.persistent, ~scale(abs(latitude))*
+                                                  scale(log(acc_duration)))
+summary(mod.lat_time_persistent)
+```
+
 
 #### Body mass x Heating rate
 ```{r}
@@ -3374,16 +3497,60 @@ mod.mass_ramp_persistent<- run.model(d.persistent, ~scale(log(body_mass))*
 summary(mod.mass_ramp_persistent)
 ```
 
+#### Body mass x Acclimation duration
+```{r}
+mod.mass_time_persistent<- run.model(d.persistent, ~scale(log(body_mass))*
+                              scale(log(acc_duration)))
+summary(mod.mass_time_persistent)
+```
+
+#### Heating rate x Acclimation duration
+```{r}
+mod.ramp_time_persistent<- run.model(d.persistent, ~scale(log(ramping))*
+                              scale(log(acc_duration)))
+summary(mod.ramp_time_persistent)
+```
 
 #### Latitude x Body mass x Heating rate
 
-This model failed to converge due to sample size limitations
+This model failed to converge, probably due to sample size limitations
 ```{r, eval=F}
 mod.lat_mass_ramp_persistent<- run.model(d.persistent,~scale(log(body_mass))*
                                                        scale(log(ramping))*
                                                        scale(abs(latitude)))
 summary(mod.lat_mass_ramp_persistent)
 ```
+
+#### Latitude x Body mass x Acclimation duration
+
+This model failed to converge, probably due to sample size limitations
+
+```{r, eval=F}
+mod.lat_mass_time_persistent<- run.model(d.persistent, ~scale(log(body_mass))*
+                                  scale(log(acc_duration))*
+                                  scale(abs(latitude)))
+summary(mod.lat_mass_time_persistent)
+```
+
+
+#### Latitude x Heating rate x Acclimation duration
+
+This model failed to converge, probably due to sample size limitations
+```{r, eval=F}
+mod.lat_ramp_time_persistent<- run.model(d.persistent, ~scale(log(acc_duration))*
+                                  scale(log(ramping))*
+                                  scale(abs(latitude)))
+summary(mod.lat_ramp_time_persistent)
+```
+
+#### Body size x Heating rate x Acclimation duration
+```{r}
+mod.mass_ramp_time_persistent<- run.model(d.persistent, ~scale(log(body_mass))*
+                                  scale(log(ramping))*
+                                  scale(log(acc_duration)))
+summary(mod.mass_ramp_time_persistent)
+```
+
 
 ## Exclude temperature tolerated for one hour
 
