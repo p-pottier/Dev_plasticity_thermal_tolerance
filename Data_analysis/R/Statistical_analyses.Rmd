@@ -32,7 +32,6 @@ knitr::opts_chunk$set(
 ## Load packages
 
 ```{r}
-groundhog::groundhog.library("emmeans", "2022-01-01")
 pacman::p_load(tidyverse,
                kableExtra,
                DataExplorer,
@@ -56,10 +55,10 @@ pacman::p_load(tidyverse,
                ggstatsplot,
                here,
                ggExtra, 
-               #emmeans,# remotes::install_github("rvlenth/emmeans")
-               MuMIn,
-               groundhog) 
+               MuMIn) 
 
+library("groundhog")
+groundhog.library("emmeans", "2022-04-23") 
 ```
 
 ## Load data
@@ -3602,7 +3601,7 @@ ggplot(d_initial, aes(ymax=ymax, ymin=ymin, xmax=4, xmin=2.5, fill=category)) +
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         plot.background = element_rect(fill = "transparent", color = NA))
-ggsave("output/initial_effect_sizes.png", height=12, width=12, dpi=800, bg="transparent")
+#ggsave("output/initial_effect_sizes.png", height=12, width=12, dpi=800, bg="transparent")
 
 
 
@@ -3623,7 +3622,7 @@ ggplot(d_persist, aes(ymax=ymax, ymin=ymin, xmax=4, xmin=2.5, fill=category)) +
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         plot.background = element_rect(fill = "transparent", color = NA))
-ggsave("output/persistent_effect_sizes.png", height=12, width=12, dpi=800, bg="transparent")
+#ggsave("output/persistent_effect_sizes.png", height=12, width=12, dpi=800, bg="transparent")
 
 ```
 
