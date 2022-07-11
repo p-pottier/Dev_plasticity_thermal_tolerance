@@ -1,6 +1,8 @@
 # Developmental plasticity in thermal tolerance: ontogenetic variation, persistence, and future directions
 
-Cite as: **Pottier, P., Burke, S., Zhang, R.Y., Noble, D.W.A., Schwanz, L.E., Drobniak, S.M., & Nakagawa, S.  Developmental plasticity in thermal tolerance: ontogenetic variation, persistence, and future directions. Authorea.** [![DOI](https://zenodo.org/badge/DOI/10.22541/au.164573834.49438532/v1.svg)](http://doi.org/10.22541/au.164573834.49438532/v1)
+Cite the preprint as: **Pottier, P., Burke, S., Zhang, R.Y., Noble, D.W.A., Schwanz, L.E., Drobniak, S.M., & Nakagawa, S.  Developmental plasticity in thermal tolerance: ontogenetic variation, persistence, and future directions. Authorea.** [![DOI](https://zenodo.org/badge/DOI/10.22541/au.164573834.49438532/v1.svg)](http://doi.org/10.22541/au.164573834.49438532/v1)
+
+Cite the data and code as: **Pottier, P., Burke, S., Zhang, R.Y., Noble, D.W.A., Schwanz, L.E., Drobniak, S.M. & Nakagawa, S. (2022). Data from: Developmental plasticity in thermal tolerance: ontogenetic variation, persistence, and future directions. Zenodo.** [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6818559.svg)]
 
 This repository contains bibliographic files, data and analysis code for this project. We recommend navigating the data and analyses with the knitted file available at: https://p-pottier.github.io/Dev_plasticity_thermal_tolerance/ 
 
